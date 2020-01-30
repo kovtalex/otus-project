@@ -1,0 +1,60 @@
+version: '3.7'
+services:
+  mongo:
+    image: mongo:${MONGO_VER}
+    volumes:
+      - mongo_db:/data/db
+    networks:
+      back_net:
+
+  rabbitmq:
+    image: rabbitmq:${RABBITMQ_VER}
+    environment:
+      - RABBITMQ_NODE_TYPE=queue-disc
+      - RABBITMQ_NODE_NAME=rabbitmq@urls
+    ports:
+      - 15672:15672/tcp
+    volumes:
+      - rabbimq_data:/var/lib/rabbitmq:rw
+      - /tmp/definitions.json:/opt/definitions.json:ro
+      - /tmp/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
+    networks:
+      back_net:
+ 
+  ui:
+    image: kovtlex/search_engine_ui:${UI_VER}
+    environment:
+      - MONGO=mongo
+      - MONGO_PORT=27017
+    ports:
+      - 8000:8000/tcp
+    depends_on:
+      - mongo
+    networks:
+      back_net:
+
+  crawler:
+    image: kovtlex/search_engine_crawler:${CRAWLER_VER}
+    environment:
+      - MONGO=mongo
+      - MONGO_PORT=27017
+      - RMQ_HOST=rabbitmq
+      - RMQ_QUEUE=urls
+      - RMQ_USERNAME=guest
+      - RMQ_PASSWORD=guest
+      - CHECK_INTERVAL=10
+      - URL=https://vitkhab.github.io/search_engine_test_site/
+      - EXCLUDE_URLS=.*github.com
+    depends_on:
+      - mongo
+      - rabbitmq
+    networks:
+      back_net:
+
+volumes:
+  mongo_db:
+  rabbitmq_data:
+
+networks:
+  back_net:
+  front_net:

@@ -1,0 +1,9 @@
+*.tfstate
+*.tfstate.*.backup
+*.tfstate.backup
+*.tfvars
+.terraform/
+*.retry
+vault.key
+*.bak
+.env

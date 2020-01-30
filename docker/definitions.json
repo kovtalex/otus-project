@@ -1,0 +1,58 @@
+{ 
+    "rabbit_version":"3.8.2",
+    "rabbitmq_version":"3.8.2",
+    "users":[ 
+      { 
+        "name":"guest",
+        "password_hash":"HvdoR4PR7LcIb9VN28JPa8zRL50kKIM7ZjICSzDkDuaET8hU",
+        "hashing_algorithm":"rabbit_password_hashing_sha256",
+        "tags":"administrator"
+      }
+    ],
+    "vhosts":[ 
+      { 
+        "name":"/"
+      }
+    ],
+    "permissions":[ 
+      { 
+        "user":"guest",
+        "vhost":"/",
+        "configure":".*",
+        "write":".*",
+        "read":".*"
+      }
+    ],
+    "topic_permissions":[ 
+  
+    ],
+    "parameters":[ 
+  
+    ],
+    "global_parameters":[ 
+      { 
+        "name":"cluster_name",
+        "value":"rabbit@search_engine"
+      }
+    ],
+    "policies":[ 
+  
+    ],
+    "queues":[ 
+      { 
+        "name":"urls",
+        "vhost":"/",
+        "durable":false,
+        "auto_delete":false,
+        "arguments":{ 
+          "x-queue-type":"classic"
+        }
+      }
+    ],
+    "exchanges":[ 
+  
+    ],
+    "bindings":[ 
+  
+    ]
+  }
