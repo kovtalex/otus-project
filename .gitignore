@@ -6,4 +6,4 @@
 *.retry
 vault.key
 *.bak
-.env
+
