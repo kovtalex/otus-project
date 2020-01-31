@@ -19,5 +19,5 @@ build_job:
   script:
     - echo 'Building...'
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_BASE64\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context $CI_PROJECT_DIR/${PWD##*/} --dockerfile $CI_PROJECT_DIR/src/search_engine_crawler/Dockerfile --destination $CI_REGISTRY/crawler:$CI_COMMIT_TAG
+    - /kaniko/executor --context $CI_PROJECT_DIR/src/search_engine_crawler/ --dockerfile $CI_PROJECT_DIR/src/search_engine_crawler/Dockerfile --destination $CI_REGISTRY/crawler:$CI_COMMIT_TAG
     
