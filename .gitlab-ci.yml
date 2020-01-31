@@ -50,11 +50,8 @@ deploy_dev_job:
     - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
     - gcloud --quiet config set project $GOOGLE_PROJECT_ID
     - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
-    - gcloud compute ssh docker-host --force-key-file-overwrite --command="sudo curl -L \"https://github.com/docker/compose/releases/download/1.25.3/docker-compose-\$(uname -s)-\$(uname -m)\" -o /usr/local/bin/docker-compose"
-    - gcloud compute ssh docker-host --command="sudo chmod +x /usr/local/bin/docker-compose"
-    - cd $CI_PROJECT_DIR/docker/
-    - ls -la
-    - gcloud compute ssh docker-host --command="docker-compose up -d"
+    - gcloud compute scp $CI_PROJECT_DIR/docker docker-host:~
+    - gcloud compute ssh docker-host --command="docker-compose -f ~/docker/docker-compose.yml up -d"
   environment:
     name: dev
     url: http://35.195.140.173:8000
