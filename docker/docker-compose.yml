@@ -8,10 +8,7 @@ services:
       back_net:
 
   rabbitmq:
-    image: rabbitmq:${RABBITMQ_VER}
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq:rw
-      - /tmp/definitions.json:/etc/rabbitmq/definitons.json:ro
+    image: kovtalex/rabbitmq:${RABBITMQ_VER}
     ports:
       - 15672:15672/tcp
     networks:
@@ -49,7 +46,6 @@ services:
 
 volumes:
   mongo_db:
-  rabbitmq_data:
 
 networks:
   back_net:
