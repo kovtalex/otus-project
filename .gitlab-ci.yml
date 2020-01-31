@@ -22,4 +22,4 @@ build_job:
     - ls -la
     - echo $CI_PROJECT_DIR/src/search_engine_crawler/
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_BASE64\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination $CI_REGISTRY/kovtalex/crawler:$CI_COMMIT_TAG
+    - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination kovtalex/crawler:$CI_COMMIT_TAG
