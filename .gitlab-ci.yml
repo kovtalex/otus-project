@@ -5,12 +5,22 @@ stages:
   - approve
   - production
 
+.infa-only: &infra-only
+  only:
+    - /^infra_.*$/
+
+.feature-only: &feature-only
+  only:
+    - /^feature_.*$/
+
+
 variables:
   GOOGLE_PROJECT_ID: docker-258208
   GOOGLE_COMPUTE_ZONE: europe-west1-b
 
-build_job:
+build_feature_job:
   stage: build
+  <<: *feature-only
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
@@ -22,8 +32,21 @@ build_job:
     - cd $CI_PROJECT_DIR/src/search_engine_ui/
     - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination kovtalex/search_engine_ui:$CI_COMMIT_TAG
 
+build_feature_job:
+  stage: build
+  <<: *infra-only
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - echo 'Building...'
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_BASE64\"}}}" > /kaniko/.docker/config.json
+    - cd $CI_PROJECT_DIR/services/rabbitmq/
+    - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination kovtalex/rabbitmq:$CI_COMMIT_TAG
+
 test unit1:
   stage: testing
+  <<: *feature-only
   image: python:3.6.0-alpine
   script:
     - echo "test unit search_engine_crawler"
@@ -35,6 +58,7 @@ test unit1:
 
 test unit2:
   stage: testing
+  <<: *feature-only
   image: python:3.6.0-alpine
   script:
     - echo "test unit search_engine_ui"
