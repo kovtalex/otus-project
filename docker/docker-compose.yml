@@ -15,19 +15,19 @@ services:
       back_net:
  
   ui:
-    image: kovtlex/search_engine_ui:${UI_VER}
+    image: kovtalex/search_engine_ui:${UI_VER}
     environment:
       - MONGO=mongo
       - MONGO_PORT=27017
     ports:
-      - 8000:80/tcp
+      - 80:8000/tcp
     depends_on:
       - mongo
     networks:
       back_net:
 
   crawler:
-    image: kovtlex/search_engine_crawler:${CRAWLER_VER}
+    image: kovtalex/search_engine_crawler:${CRAWLER_VER}
     environment:
       - MONGO=mongo
       - MONGO_PORT=27017
