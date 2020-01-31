@@ -32,7 +32,7 @@ build_feature_job:
     - cd $CI_PROJECT_DIR/src/search_engine_ui/
     - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination kovtalex/search_engine_ui:$CI_COMMIT_TAG
 
-build_feature_job:
+build_infra_job:
   stage: build
   <<: *infra-only
   image:
