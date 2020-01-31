@@ -9,15 +9,11 @@ services:
 
   rabbitmq:
     image: rabbitmq:${RABBITMQ_VER}
-    environment:
-      - RABBITMQ_NODE_TYPE=queue-disc
-      - RABBITMQ_NODE_NAME=rabbitmq@urls
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq:rw
+      - /tmp/definitions.json:/etc/rabbitmq/definitons.json:ro
     ports:
       - 15672:15672/tcp
-    volumes:
-      - rabbimq_data:/var/lib/rabbitmq:rw
-      - /tmp/definitions.json:/opt/definitions.json:ro
-      - /tmp/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
     networks:
       back_net:
  
@@ -42,7 +38,7 @@ services:
       - RMQ_QUEUE=urls
       - RMQ_USERNAME=guest
       - RMQ_PASSWORD=guest
-      - CHECK_INTERVAL=10
+      - CHECK_INTERVAL=60
       - URL=https://vitkhab.github.io/search_engine_test_site/
       - EXCLUDE_URLS=.*github.com
     depends_on:
@@ -57,4 +53,4 @@ volumes:
 
 networks:
   back_net:
-  front_net:
+

@@ -1,16 +1,23 @@
-image: "ruby:2.5"
+stages:
+  - build
+  - testing
 
-before_script:
-  - apt-get update -qq && apt-get install -y -qq sqlite3 libsqlite3-dev nodejs
-  - ruby -v
-  - which ruby
-  - gem install bundler --no-document
-  - bundle install --jobs $(nproc)  "${FLAGS[@]}"
-
-rspec:
+test unit:
+  stage: testing
   script:
-    - bundle exec rspec
+    - echo "test unit"
 
-rubocop:
+variables:
+  GOOGLE_PROJECT_ID: docker-258208
+  GOOGLE_COMPUTE_ZONE: europe-west1-b
+
+build_job:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
   script:
-    - bundle exec rubocop
+    - echo 'Building...'
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_BASE64\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR/${PWD##*/} --dockerfile $CI_PROJECT_DIR/src/search_engine_crawler/Dockerfile --destination $CI_REGISTRY/crawler:$CI_COMMIT_TAG
+    
