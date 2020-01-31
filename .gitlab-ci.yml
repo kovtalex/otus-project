@@ -50,8 +50,9 @@ deploy_dev_job:
     - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
     - gcloud --quiet config set project $GOOGLE_PROJECT_ID
     - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
-    - gcloud compute scp --recurse $CI_PROJECT_DIR/docker docker-host:~
-    - gcloud compute ssh docker-host --command="docker-compose -f ~/docker-compose.yml up -d"
+    - gcloud compute scp --recurse docker docker-host:~
+    - gcloud compute ssh docker-host --command="ls -la"
+    - gcloud compute ssh docker-host --command="cd ~/docker && docker-compose -f ~/docker-compose.yml up -d"
   environment:
     name: dev
     url: http://35.195.140.173:8000
