@@ -2,11 +2,6 @@ stages:
   - build
   - testing
 
-test unit:
-  stage: testing
-  script:
-    - echo "test unit"
-
 variables:
   GOOGLE_PROJECT_ID: docker-258208
   GOOGLE_COMPUTE_ZONE: europe-west1-b
@@ -18,8 +13,20 @@ build_job:
     entrypoint: [""]
   script:
     - echo 'Building...'
-    - cd $CI_PROJECT_DIR/src/search_engine_crawler/
-    - ls -la
-    - echo $CI_PROJECT_DIR/src/search_engine_crawler/
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_BASE64\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination kovtalex/crawler:$CI_COMMIT_TAG
+    - cd $CI_PROJECT_DIR/src/search_engine_crawler/
+    - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination kovtalex/search_engine_crawler:$CI_COMMIT_TAG
+    - cd $CI_PROJECT_DIR/src/search_engine_ui/
+    - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination kovtalex/search_engine_ui:$CI_COMMIT_TAG
+
+test unit:
+  stage: testing
+  image: python:3.6.0-alpine
+  script:
+    - echo "test unit search_engine_crawler"
+    - cd $CI_PROJECT_DIR/src/search_engine_crawler/
+    - pip install -r requirements.txt -r requirements-test.txt
+    - python -m unittest discover -s tests/ 
+    - coverage run -m unittest discover -s tests/ 
+    - coverage report --include crawler/crawler.py
+
