@@ -51,6 +51,7 @@ deploy_dev_job:
     - gcloud --quiet config set project $GOOGLE_PROJECT_ID
     - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
     - gcloud compute scp $CI_PROJECT_DIR/docker/docker-compose.yml docker-host:~
+    - gcloud compute scp $CI_PROJECT_DIR/docker/.env.example docker-host:~
     - gcloud compute ssh docker-host --command="docker-compose -f ~/docker-compose.yml up -d"
   environment:
     name: dev
