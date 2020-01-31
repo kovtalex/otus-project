@@ -2,6 +2,8 @@ stages:
   - build
   - testing
   - review
+  - approve
+  - production
 
 variables:
   GOOGLE_PROJECT_ID: docker-258208
@@ -72,3 +74,30 @@ stop_dev_job:
   environment:
     name: dev
     action: stop
+
+approve:
+  stage: approve
+  when: manual
+  script:
+    - mkdir -p .ci_status
+    - echo $(date +%s) > .ci_status/approved
+  artifacts:
+    paths:
+      - .ci_status/
+
+NOT approve:
+  stage: approve
+  when: manual
+  script:
+    - mkdir -p .ci_status
+    - echo $(date +%s) > .ci_status/not_approved
+  artifacts:
+    paths:
+      - .ci_status/
+
+deploy to production:
+  stage: production
+  when: manual
+  script:
+    - if [[ $(cat .ci_status/not_approved) > $(cat .ci_status/approved) ]]; then echo "NOT approve"; exit 1; fi
+    - echo "deploy to production!"
