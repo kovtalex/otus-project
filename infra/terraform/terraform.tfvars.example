@@ -1,0 +1,6 @@
+project         = "docker-258208"
+public_key_path = "~/.ssh/appuser.pub"
+app_disk_image  = "docker-host-base"
+name            = "docker-host"
+machine_type    = "n1-standard-1"
+app_tags        = ["docker-host"]
