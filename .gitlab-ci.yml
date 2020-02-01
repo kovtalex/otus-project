@@ -71,16 +71,16 @@ deploy_dev_job:
   stage: staging
   image: google/cloud-sdk
   script:
-    - echo 'Deploy'
+    - echo 'Deploy Dev env'
     - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
     - gcloud --quiet config set project $GOOGLE_PROJECT_ID
     - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
-    - gcloud compute instances create docker-host --machine-type=n1-standard-1 --tags=http-server,docker-host --image-family=docker-host-base --boot-disk-size=10GB --restart-on-failure
-    - gcloud compute scp --recurse docker docker-host:~
-    - gcloud compute ssh docker-host --command="cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml up -d"
+    - gcloud compute ssh docker-host-dev --force-key-file-overwrite --command="cd ~/docker && docker-compose down"
+    - gcloud compute scp --recurse docker docker-host-dev:~
+    - gcloud compute ssh docker-host-dev --command="cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml up -d"
   environment:
     name: dev
-    url: http://35.210.56.54:80
+    url: http://35.241.227.40/
     on_stop: stop_dev_job
 
 stop_dev_job:
@@ -89,11 +89,11 @@ stop_dev_job:
   variables:
     GIT_STRATEGY: none
   script:
-    - echo "Remove dev env"
+    - echo "Remove Dev env"
     - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
     - gcloud --quiet config set project $GOOGLE_PROJECT_ID
     - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
-    - gcloud compute ssh docker-host --force-key-file-overwrite --command="cd ~/docker && docker-compose down"
+    - gcloud compute ssh docker-host-dev --force-key-file-overwrite --command="cd ~/docker && docker-compose down"
   when: manual
   environment:
     name: dev
@@ -105,10 +105,17 @@ preprod:
   only:
     - /^\d+\.\d+\.\d+/
   script:
-    - echo 'Deploy'
+    - echo 'Deploy Preproduction env'
+    - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+    - gcloud --quiet config set project $GOOGLE_PROJECT_ID
+    - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
+    - gcloud compute ssh docker-host-preprod --force-key-file-overwrite --command="cd ~/docker && docker-compose down"
+    - gcloud compute scp --recurse docker docker-host-preprop:~
+    - gcloud compute ssh docker-host-preprod --command="cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml up -d"
+
   environment:
     name: stage
-    url: https://beta.example.com
+    url: https://35.233.5.5/
 
 production:
   stage: production
@@ -116,7 +123,13 @@ production:
   only:
     - /^\d+\.\d+\.\d+/  
   script:
-    - echo 'Deploy'
+    - echo 'Deploy Production env'
+    - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+    - gcloud --quiet config set project $GOOGLE_PROJECT_ID
+    - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
+    - gcloud compute ssh docker-host-prod --force-key-file-overwrite --command="cd ~/docker && docker-compose down"
+    - gcloud compute scp --recurse docker docker-host-prod:~
+    - gcloud compute ssh docker-host-prod --command="cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml up -d"
   environment:
     name: production
-    url: https://example.com
+    url: https://35.195.140.173/
