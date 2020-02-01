@@ -1,0 +1,15 @@
+---
+plugin: gcp_compute  
+projects:
+  - docker-258208                
+regions:                                
+  - europe-west1
+hostnames:
+  - name
+groups:
+  docker: "'docker-host' in name"
+compose:
+  ansible_host: networkInterfaces[0].accessConfigs[0].natIP
+filters: []
+auth_kind: serviceaccount     
+service_account_file: ~/docker.json
