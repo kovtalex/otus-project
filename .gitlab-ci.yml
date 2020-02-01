@@ -5,21 +5,12 @@ stages:
   - preprod
   - production
 
-.infa-only: &infra-only
-  only:
-    - /^infra_.*$/
-
-.feature-only: &feature-only
-  only:
-    - /^feature_.*$/
-
 variables:
   GOOGLE_PROJECT_ID: docker-258208
   GOOGLE_COMPUTE_ZONE: europe-west1-b
 
 build_feature_job:
   stage: build
-  <<: *feature-only
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
@@ -33,7 +24,6 @@ build_feature_job:
 
 build_infra_job:
   stage: build
-  <<: *infra-only
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
@@ -45,7 +35,6 @@ build_infra_job:
 
 test unit1:
   stage: testing
-  <<: *feature-only
   image: python:3.6.0-alpine
   script:
     - echo "test unit search_engine_crawler"
@@ -57,7 +46,6 @@ test unit1:
 
 test unit2:
   stage: testing
-  <<: *feature-only
   image: python:3.6.0-alpine
   script:
     - echo "test unit search_engine_ui"
@@ -80,46 +68,28 @@ deploy_dev_job:
   environment:
     name: dev
     url: http://35.241.227.40/
-    on_stop: stop_dev_job
-
-stop_dev_job:
-  stage: staging
-  image: google/cloud-sdk
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - echo "Remove Dev env"
-    - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
-    - gcloud --quiet config set project $GOOGLE_PROJECT_ID
-    - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
-    - gcloud compute ssh docker-host-dev --force-key-file-overwrite --command="cd ~/docker && docker-compose down"
-  when: manual
-  environment:
-    name: dev
-    action: stop
 
 preprod:
   stage: preprod
-  when: manual
-  only:
-    - /^\d+\.\d+\.\d+/
+  image: google/cloud-sdk
   script:
     - echo 'Deploy Preproduction env'
     - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
     - gcloud --quiet config set project $GOOGLE_PROJECT_ID
     - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
-    - gcloud compute scp --recurse docker docker-host-preprop:~
+    - gcloud compute scp --recurse docker docker-host-preprod:~
     - gcloud compute ssh docker-host-preprod --command="cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml up -d"
-
+  when: manual
+  only:
+    - /^\d+\.\d+\.\d+/
+    - master
   environment:
     name: stage
     url: https://35.233.5.5/
 
 production:
   stage: production
-  when: manual
-  only:
-    - /^\d+\.\d+\.\d+/  
+  image: google/cloud-sdk
   script:
     - echo 'Deploy Production env'
     - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
@@ -127,6 +97,10 @@ production:
     - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
     - gcloud compute scp --recurse docker docker-host-prod:~
     - gcloud compute ssh docker-host-prod --command="cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml up -d"
+  when: manual
+  only:
+    - /^\d+\.\d+\.\d+/  
+    - master
   environment:
     name: production
     url: https://35.195.140.173/
