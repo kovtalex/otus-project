@@ -1,8 +1,8 @@
 stages:
   - build
   - testing
-  - review
-  - approve
+  - staging
+  - pre-production
   - production
 
 .infa-only: &infra-only
@@ -12,7 +12,6 @@ stages:
 .feature-only: &feature-only
   only:
     - /^feature_.*$/
-
 
 variables:
   GOOGLE_PROJECT_ID: docker-258208
@@ -69,23 +68,23 @@ test unit2:
     - coverage report --include ui/ui.py
 
 deploy_dev_job:
-  stage: review
+  stage: staging
   image: google/cloud-sdk
   script:
     - echo 'Deploy'
     - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
     - gcloud --quiet config set project $GOOGLE_PROJECT_ID
     - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
-    - gcloud compute instances create docker-host- --machine-type=n1-standard-1 --tags=http-server,docker-host --image-family=docker-host-base --boot-disk-size=10GB --restart-on-failure
+    - gcloud compute instances create docker-host --machine-type=n1-standard-1 --tags=http-server,docker-host --image-family=docker-host-base --boot-disk-size=10GB --restart-on-failure
     - gcloud compute scp --recurse docker docker-host:~
-    - gcloud compute ssh docker-host- --command="cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml up -d"
+    - gcloud compute ssh docker-host --command="cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml up -d"
   environment:
     name: dev
     url: http://35.210.56.54:80
     on_stop: stop_dev_job
 
 stop_dev_job:
-  stage: review
+  stage: staging
   image: google/cloud-sdk
   variables:
     GIT_STRATEGY: none
@@ -100,29 +99,24 @@ stop_dev_job:
     name: dev
     action: stop
 
-approve:
-  stage: approve
+preproduction:
+  stage: preproduction
   when: manual
+  only:
+    - /^\d+\.\d+\.\d+/
   script:
-    - mkdir -p .ci_status
-    - echo $(date +%s) > .ci_status/approved
-  artifacts:
-    paths:
-      - .ci_status/
+    - echo 'Deploy'
+  environment:
+    name: stage
+    url: https://beta.example.com
 
-NOT approve:
-  stage: approve
-  when: manual
-  script:
-    - mkdir -p .ci_status
-    - echo $(date +%s) > .ci_status/not_approved
-  artifacts:
-    paths:
-      - .ci_status/
-
-deploy to production:
+production:
   stage: production
   when: manual
+  only:
+    - /^\d+\.\d+\.\d+/  
   script:
-    - if [[ $(cat .ci_status/not_approved) > $(cat .ci_status/approved) ]]; then echo "NOT approve"; exit 1; fi
-    - echo "deploy to production!"
+    - echo 'Deploy'
+  environment:
+    name: production
+    url: https://example.com
