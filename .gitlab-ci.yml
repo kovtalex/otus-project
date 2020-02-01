@@ -75,7 +75,6 @@ deploy_dev_job:
     - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
     - gcloud --quiet config set project $GOOGLE_PROJECT_ID
     - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
-    - gcloud compute ssh docker-host-dev --force-key-file-overwrite --command="cd ~/docker && docker-compose down"
     - gcloud compute scp --recurse docker docker-host-dev:~
     - gcloud compute ssh docker-host-dev --command="cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml up -d"
   environment:
@@ -109,7 +108,6 @@ preprod:
     - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
     - gcloud --quiet config set project $GOOGLE_PROJECT_ID
     - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
-    - gcloud compute ssh docker-host-preprod --force-key-file-overwrite --command="cd ~/docker && docker-compose down"
     - gcloud compute scp --recurse docker docker-host-preprop:~
     - gcloud compute ssh docker-host-preprod --command="cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml up -d"
 
@@ -127,7 +125,6 @@ production:
     - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
     - gcloud --quiet config set project $GOOGLE_PROJECT_ID
     - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
-    - gcloud compute ssh docker-host-prod --force-key-file-overwrite --command="cd ~/docker && docker-compose down"
     - gcloud compute scp --recurse docker docker-host-prod:~
     - gcloud compute ssh docker-host-prod --command="cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml up -d"
   environment:
