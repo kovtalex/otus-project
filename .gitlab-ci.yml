@@ -2,7 +2,7 @@ stages:
   - build
   - testing
   - staging
-  - pre-production
+  - preprod
   - production
 
 .infa-only: &infra-only
@@ -99,8 +99,8 @@ stop_dev_job:
     name: dev
     action: stop
 
-preproduction:
-  stage: preproduction
+preprod:
+  stage: preprod
   when: manual
   only:
     - /^\d+\.\d+\.\d+/
