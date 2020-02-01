@@ -76,11 +76,12 @@ deploy_dev_job:
     - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
     - gcloud --quiet config set project $GOOGLE_PROJECT_ID
     - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
+    - gcloud compute instances create docker-host- --machine-type=n1-standard-1 --tags=http-server,docker-host --image-family=docker-host-base --boot-disk-size=10GB --restart-on-failure
     - gcloud compute scp --recurse docker docker-host:~
-    - gcloud compute ssh docker-host --command="cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml up -d"
+    - gcloud compute ssh docker-host- --command="cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml up -d"
   environment:
     name: dev
-    url: http://35.195.140.173:80
+    url: http://35.210.56.54:80
     on_stop: stop_dev_job
 
 stop_dev_job:
