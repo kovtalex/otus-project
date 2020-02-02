@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   prometheus:
-    image: ${REGISTRY_USERNAME}/prometheus_prg:${PROMETHEUS_VER}
+    image: ${REGISTRY_USERNAME}/prometheus_prj:${PROMETHEUS_VER}
     ports:
       - '9090:9090'
     volumes:
