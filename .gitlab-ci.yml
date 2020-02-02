@@ -27,20 +27,38 @@ test unit ui:
     - coverage run -m unittest discover -s tests/ 
     - coverage report --include ui/ui.py
 
-build:
+build rabbitmq:
   stage: build
   image:
-    name: gcr.io/kaniko-project/executor:debug
+    name: gcr.io/kaniko-project/executor:v0.16.0
+    entrypoint: [""]
+  script:
+    - echo 'Building...'
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_BASE64\"}}}" > /kaniko/.docker/config.json
+    - cd $CI_PROJECT_DIR/services/rabbitmq/
+    - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination kovtalex/rabbitmq:$CI_COMMIT_SHA
+
+build ui:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:v0.16.0
+    entrypoint: [""]
+  script:
+    - echo 'Building...'
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_BASE64\"}}}" > /kaniko/.docker/config.json
+    - cd $CI_PROJECT_DIR/src/search_engine_ui/
+    - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination kovtalex/search_engine_ui:$CI_COMMIT_SHA
+
+  build crawler:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:v0.16.0
     entrypoint: [""]
   script:
     - echo 'Building...'
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_BASE64\"}}}" > /kaniko/.docker/config.json
     - cd $CI_PROJECT_DIR/src/search_engine_crawler/
     - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination kovtalex/search_engine_crawler:$CI_COMMIT_SHA
-    - cd $CI_PROJECT_DIR/src/search_engine_ui/
-    - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination kovtalex/search_engine_ui:$CI_COMMIT_SHA
-    - cd $CI_PROJECT_DIR/services/rabbitmq/
-    - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination kovtalex/rabbitmq:$CI_COMMIT_SHA
 
 push latest:
   stage: push  
