@@ -28,7 +28,7 @@
   "global_parameters": [
     {
       "name": "cluster_name",
-      "value": "rabbit@otus-project"
+      "value": "rabbit@rabbit"
     }
   ],
   "policies": [],

@@ -44,6 +44,19 @@ build prometheus_prj:
     - cd $CI_PROJECT_DIR/services/monitoring/prometheus/
     - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination $REGISTRY_USERNAME/prometheus_prj:$CI_COMMIT_SHA
 
+build grafana_prj:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  tags:
+    - docker
+  script:
+    - echo 'Building...'
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_BASE64\"}}}" > /kaniko/.docker/config.json
+    - cd $CI_PROJECT_DIR/services/monitoring/grafana/
+    - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination $REGISTRY_USERNAME/grafana_prj:$CI_COMMIT_SHA
+
 build alertmanager_prj:
   stage: build
   image:
@@ -108,16 +121,19 @@ push latest:
   script:
     - echo -n $CI_REGISTRY_PASS | docker login --username $REGISTRY_USERNAME --password-stdin $CI_REGISTRY
     - docker pull $REGISTRY_USERNAME/prometheus_prj:$CI_COMMIT_SHA
+    - docker pull $REGISTRY_USERNAME/grafana_prj:$CI_COMMIT_SHA
     - docker pull $REGISTRY_USERNAME/alertmanager_prj:$CI_COMMIT_SHA
     - docker pull $REGISTRY_USERNAME/rabbitmq:$CI_COMMIT_SHA
     - docker pull $REGISTRY_USERNAME/search_engine_ui:$CI_COMMIT_SHA
     - docker pull $REGISTRY_USERNAME/search_engine_crawler:$CI_COMMIT_SHA
     - docker tag $REGISTRY_USERNAME/prometheus_prj:$CI_COMMIT_SHA $REGISTRY_USERNAME/prometheus_prj:latest
+    - docker tag $REGISTRY_USERNAME/grafana_prj:$CI_COMMIT_SHA $REGISTRY_USERNAME/grafana_prj:latest
     - docker tag $REGISTRY_USERNAME/alertmanager_prj:$CI_COMMIT_SHA $REGISTRY_USERNAME/alertmanager_prj:latest
     - docker tag $REGISTRY_USERNAME/rabbitmq:$CI_COMMIT_SHA $REGISTRY_USERNAME/rabbitmq:latest
     - docker tag $REGISTRY_USERNAME/search_engine_ui:$CI_COMMIT_SHA $REGISTRY_USERNAME/search_engine_ui:latest
     - docker tag $REGISTRY_USERNAME/search_engine_crawler:$CI_COMMIT_SHA $REGISTRY_USERNAME/search_engine_crawler:latest
     - docker push $REGISTRY_USERNAME/prometheus_prj:latest
+    - docker push $REGISTRY_USERNAME/grafana_prj:latest
     - docker push $REGISTRY_USERNAME/alertmanager_prj:latest
     - docker push $REGISTRY_USERNAME/rabbitmq:latest
     - docker push $REGISTRY_USERNAME/search_engine_ui:latest
@@ -137,16 +153,19 @@ push tag:
   script:
     - echo -n $CI_REGISTRY_PASS | docker login --username $REGISTRY_USERNAME --password-stdin $CI_REGISTRY
     - docker pull $REGISTRY_USERNAME/prometheus_prj:$CI_COMMIT_SHA
+    - docker pull $REGISTRY_USERNAME/grafana_prj:$CI_COMMIT_SHA
     - docker pull $REGISTRY_USERNAME/alertmanager_prj:$CI_COMMIT_SHA
     - docker pull $REGISTRY_USERNAME/rabbitmq:$CI_COMMIT_SHA
     - docker pull $REGISTRY_USERNAME/search_engine_ui:$CI_COMMIT_SHA
     - docker pull $REGISTRY_USERNAME/search_engine_crawler:$CI_COMMIT_SHA
     - docker tag $REGISTRY_USERNAME/prometheus_prj:$CI_COMMIT_SHA $REGISTRY_USERNAME/prometheus_prj:$CI_COMMIT_REF_NAME
+    - docker tag $REGISTRY_USERNAME/grafana_prj:$CI_COMMIT_SHA $REGISTRY_USERNAME/grafana_prj:$CI_COMMIT_REF_NAME
     - docker tag $REGISTRY_USERNAME/alertmanager_prj:$CI_COMMIT_SHA $REGISTRY_USERNAME/alertmanager_prj:$CI_COMMIT_REF_NAME
     - docker tag $REGISTRY_USERNAME/rabbitmq:$CI_COMMIT_SHA $REGISTRY_USERNAME/rabbitmq:$CI_COMMIT_REF_NAME
     - docker tag $REGISTRY_USERNAME/search_engine_ui:$CI_COMMIT_SHA $REGISTRY_USERNAME/search_engine_ui:$CI_COMMIT_REF_NAME
     - docker tag $REGISTRY_USERNAME/search_engine_crawler:$CI_COMMIT_SHA $REGISTRY_USERNAME/search_engine_crawler:$CI_COMMIT_REF_NAME
     - docker push $REGISTRY_USERNAME/prometheus_prj:$CI_COMMIT_REF_NAME
+    - docker push $REGISTRY_USERNAME/grafana_prj:$CI_COMMIT_REF_NAME
     - docker push $REGISTRY_USERNAME/alertmanager_prj:$CI_COMMIT_REF_NAME
     - docker push $REGISTRY_USERNAME/rabbitmq:$CI_COMMIT_REF_NAME
     - docker push $REGISTRY_USERNAME/search_engine_ui:$CI_COMMIT_REF_NAME
@@ -165,7 +184,7 @@ deploy dev:
     - gcloud --quiet config set project $GOOGLE_PROJECT_ID
     - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
     - gcloud compute scp --recurse docker docker-host-dev:~
-    - gcloud compute ssh docker-host-dev --command="export REGISTRY_USERNAME=$REGISTRY_USERNAME && mkdir -p /root/docker && export RABBITMQ_VER=$CI_COMMIT_SHA && export UI_VER=$CI_COMMIT_SHA && export CRAWLER_VER=$CI_COMMIT_SHA && export PROMETHEUS_VER=$CI_COMMIT_SHA && export ALERTMANAGER_VER=$CI_COMMIT_SHA && cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml up -d && docker-compose -f docker-compose-monitoring.yml up -d"
+    - gcloud compute ssh docker-host-dev --command="export REGISTRY_USERNAME=$REGISTRY_USERNAME && mkdir -p /root/docker && export RABBITMQ_VER=$CI_COMMIT_SHA && export UI_VER=$CI_COMMIT_SHA && export CRAWLER_VER=$CI_COMMIT_SHA && export PROMETHEUS_VER=$CI_COMMIT_SHA && export ALERTMANAGER_VER=$CI_COMMIT_SHA && export GRAFANA_VER=$CI_COMMIT_SHA && cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml up -d && docker-compose -f docker-compose-monitoring.yml up -d"
   environment:
     name: dev
     url: http://35.241.227.40/

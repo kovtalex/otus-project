@@ -14,7 +14,7 @@ services:
       back_net:
 
   grafana:
-    image: grafana/grafana:${GRAFANA_VER}
+    image: ${REGISTRY_USERNAME}/grafana_prj:${GRAFANA_VER}
     volumes:
       - grafana_data:/var/lib/grafana
     environment:
