@@ -90,16 +90,20 @@ push latest:
     - docker push kovtalex/rabbitmq:latest
     - docker push kovtalex/search_engine_ui:latest
     - docker push kovtalex/search_engine_crawler:latest
-
+  only:
+    - master
+    
 push tag:
   stage: push
   image: docker:19
+  services:
+    - docker:dind
   variables:
     GIT_STRATEGY: none
   tags:
     - docker
   script:
-    - echo -n $CI_REGISTRY_PASS | docker login --username kovtalex --password-stdin
+    - echo -n $CI_REGISTRY_PASS | docker login --username kovtalex --password-stdin $CI_REGISTRY
     - docker pull kovtalex/rabbitmq:$CI_COMMIT_SHA
     - docker pull kovtalex/search_engine_ui:$CI_COMMIT_SHA
     - docker pull kovtalex/search_engine_crawler:$CI_COMMIT_SHA
