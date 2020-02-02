@@ -39,12 +39,10 @@ build job:
     - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination kovtalex/rabbitmq:$CI_COMMIT_SHA
 
 push latest:
-image: docker:19
+  stage: push  
+  image: docker:19
   variables:
     GIT_STRATEGY: none
-  stage: push
-  only:
-    - master
   script:
     - echo -n $CI_REGISTRY_PASS | docker login -u kovtalex --password-stdin
     - docker pull kovtalex/rabbitmq:$CI_COMMIT_SHA
@@ -56,14 +54,13 @@ image: docker:19
     - docker push kovtalex/rabbitmq:latest
     - docker push kovtalex/search_engine_ui:latest
     - docker push kovtalex/search_engine_crawler:latest
-
+  only:
+    - master
 push tag:
-image: docker:19
+  stage: push
+  image: docker:19
   variables:
     GIT_STRATEGY: none
-  stage: push
-  only:
-    - tags
   script:
     - echo -n $CI_REGISTRY_PASS | docker login -u kovtalex --password-stdin
     - docker pull kovtalex/rabbitmq:$CI_COMMIT_SHA
@@ -75,6 +72,8 @@ image: docker:19
     - docker push kovtalex/rabbitmq:$CI_COMMIT_REF_NAME
     - docker push kovtalex/search_engine_ui:$CI_COMMIT_REF_NAME
     - docker push kovtalex/search_engine_crawler:$CI_COMMIT_REF_NAME
+  only:
+    - tags
 
 deploy dev job:
   stage: staging
