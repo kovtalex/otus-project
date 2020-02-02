@@ -78,7 +78,7 @@ push latest:
   tags:
     - docker
   script:
-    - echo -n $CI_REGISTRY_PASS | docker login --username kovtalex --password-stdin
+    - echo -n $CI_REGISTRY_PASS | docker login --username kovtalex --password-stdin $CI_REGISTRY
     - docker pull kovtalex/rabbitmq:$CI_COMMIT_SHA
     - docker pull kovtalex/search_engine_ui:$CI_COMMIT_SHA
     - docker pull kovtalex/search_engine_crawler:$CI_COMMIT_SHA
@@ -88,8 +88,6 @@ push latest:
     - docker push kovtalex/rabbitmq:latest
     - docker push kovtalex/search_engine_ui:latest
     - docker push kovtalex/search_engine_crawler:latest
-  only:
-    - master
 
 push tag:
   stage: push
@@ -142,7 +140,7 @@ deploy preprod:
     - gcloud compute ssh docker-host-preprod --command="cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml up -d"
   when: manual
   only:
-    - tags
+    - master
   environment:
     name: stage
     url: http://35.233.5.5/
@@ -161,7 +159,7 @@ deploy production:
     - gcloud compute ssh docker-host-prod --command="cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml up -d"
   when: manual
   only:
-    - tags
+    - master
   environment:
     name: production
     url: http://35.195.140.173/
