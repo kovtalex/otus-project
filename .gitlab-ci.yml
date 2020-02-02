@@ -9,6 +9,8 @@ stages:
 test unit crawler:
   stage: testing
   image: python:3.6.0-alpine
+  tags:
+    - docker
   script:
     - echo "test unit search_engine_crawler"
     - cd $CI_PROJECT_DIR/src/search_engine_crawler/
@@ -19,6 +21,8 @@ test unit crawler:
 test unit ui:
   stage: testing
   image: python:3.6.0-alpine
+  tags:
+    - docker
   script:
     - echo "test unit search_engine_ui"
     - cd $CI_PROJECT_DIR/src/search_engine_ui/
@@ -30,8 +34,10 @@ test unit ui:
 build rabbitmq:
   stage: build
   image:
-    name: gcr.io/kaniko-project/executor:debug
+    name: gcr.io/kaniko-project/executor:v0.16.0
     entrypoint: [""]
+  tags:
+    - docker
   script:
     - echo 'Building...'
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_BASE64\"}}}" > /kaniko/.docker/config.json
@@ -41,8 +47,10 @@ build rabbitmq:
 build ui:
   stage: build
   image:
-    name: gcr.io/kaniko-project/executor:debug
+    name: gcr.io/kaniko-project/executor:v0.16.0
     entrypoint: [""]
+  tags:
+    - docker
   script:
     - echo 'Building...'
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_BASE64\"}}}" > /kaniko/.docker/config.json
@@ -52,8 +60,10 @@ build ui:
 build crawler:
   stage: build
   image:
-    name: gcr.io/kaniko-project/executor:debug
+    name: gcr.io/kaniko-project/executor:v0.16.0
     entrypoint: [""]
+  tags:
+    - docker
   script:
     - echo 'Building...'
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_BASE64\"}}}" > /kaniko/.docker/config.json
@@ -65,6 +75,8 @@ push latest:
   image: docker:19
   variables:
     GIT_STRATEGY: none
+  tags:
+    - docker
   script:
     - echo -n $CI_REGISTRY_PASS | docker login -u kovtalex --password-stdin
     - docker pull kovtalex/rabbitmq:$CI_COMMIT_SHA
@@ -83,6 +95,8 @@ push tag:
   image: docker:19
   variables:
     GIT_STRATEGY: none
+  tags:
+    - docker
   script:
     - echo -n $CI_REGISTRY_PASS | docker login -u kovtalex --password-stdin
     - docker pull kovtalex/rabbitmq:$CI_COMMIT_SHA
@@ -100,6 +114,8 @@ push tag:
 deploy dev:
   stage: staging
   image: google/cloud-sdk
+  tags:
+    - docker
   script:
     - echo 'Deploy Dev env'
     - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
@@ -114,6 +130,8 @@ deploy dev:
 deploy preprod:
   stage: preprod
   image: google/cloud-sdk
+  tags:
+    - docker
   script:
     - echo 'Deploy Preproduction env'
     - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
@@ -131,6 +149,8 @@ deploy preprod:
 deploy production:
   stage: production
   image: google/cloud-sdk
+  tags:
+    - docker
   script:
     - echo 'Deploy Production env'
     - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
