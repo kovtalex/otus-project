@@ -1,2 +1,2 @@
-FROM prom/alertmanager:v0.14.0
+FROM prom/alertmanager:v0.20.0
 ADD config.yml /etc/alertmanager/

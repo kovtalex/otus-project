@@ -23,7 +23,7 @@ resource "google_compute_firewall" "firewall_docker-host" {
   network = "default"
   allow {
     protocol = "tcp"
-    ports    = ["80","3000",]
+    ports    = ["80","3000","15672","9090","9093",]
   }
   source_ranges = ["0.0.0.0/0"]
   target_tags = ["docker-host"]
