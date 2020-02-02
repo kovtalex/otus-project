@@ -26,7 +26,7 @@ test unit:
 build job:
   stage: build
   image:
-    name: gcr.io/kaniko-project/executor:latest
+    name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
   script:
     - echo 'Building...'
