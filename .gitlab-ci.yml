@@ -78,7 +78,7 @@ push latest:
   tags:
     - docker
   script:
-    - echo -n $CI_REGISTRY_PASS | docker login --username kovtalex --password-stdin $CI_REGISTRY
+    - echo -n $CI_REGISTRY_PASS | docker login $CI_REGISTRY --username kovtalex --password-stdin
     - docker pull kovtalex/rabbitmq:$CI_COMMIT_SHA
     - docker pull kovtalex/search_engine_ui:$CI_COMMIT_SHA
     - docker pull kovtalex/search_engine_crawler:$CI_COMMIT_SHA
