@@ -23,7 +23,7 @@ test unit:
     - coverage run -m unittest discover -s tests/ 
     - coverage report --include ui/ui.py
 
-build job:
+build:
   stage: build
   image:
     name: gcr.io/kaniko-project/executor:debug
@@ -75,7 +75,7 @@ push tag:
   only:
     - tags
 
-deploy dev job:
+deploy dev:
   stage: staging
   image: google/cloud-sdk
   script:
@@ -89,7 +89,7 @@ deploy dev job:
     name: dev
     url: http://35.241.227.40/
 
-preprod:
+deploy preprod:
   stage: preprod
   image: google/cloud-sdk
   script:
@@ -106,7 +106,7 @@ preprod:
     name: stage
     url: http://35.233.5.5/
 
-production:
+deploy production:
   stage: production
   image: google/cloud-sdk
   script:
