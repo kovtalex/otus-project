@@ -13,7 +13,8 @@ services:
     restart: on-failure
     ports:
       - 15672:15672
-      - 15692:15692
+    volumes:
+      - rabbit_mq_data:/var/lib/rabbitmq:rw      
     networks:
       back_net:
  
@@ -51,7 +52,7 @@ services:
 
 volumes:
   mongo_db:
+  rabbit_mq_data:
 
 networks:
   back_net:
-
