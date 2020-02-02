@@ -78,7 +78,7 @@ push latest:
   tags:
     - docker
   script:
-    - echo -n $CI_REGISTRY_PASS | docker login -u kovtalex --password-stdin
+    - echo -n $CI_REGISTRY_PASS | docker login --username kovtalex --password-stdin
     - docker pull kovtalex/rabbitmq:$CI_COMMIT_SHA
     - docker pull kovtalex/search_engine_ui:$CI_COMMIT_SHA
     - docker pull kovtalex/search_engine_crawler:$CI_COMMIT_SHA
@@ -90,6 +90,7 @@ push latest:
     - docker push kovtalex/search_engine_crawler:latest
   only:
     - master
+
 push tag:
   stage: push
   image: docker:19
@@ -98,7 +99,7 @@ push tag:
   tags:
     - docker
   script:
-    - echo -n $CI_REGISTRY_PASS | docker login -u kovtalex --password-stdin
+    - echo -n $CI_REGISTRY_PASS | docker login --username kovtalex --password-stdin
     - docker pull kovtalex/rabbitmq:$CI_COMMIT_SHA
     - docker pull kovtalex/search_engine_ui:$CI_COMMIT_SHA
     - docker pull kovtalex/search_engine_crawler:$CI_COMMIT_SHA
