@@ -41,7 +41,7 @@ build prometheus_prg:
   script:
     - echo 'Building...'
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_BASE64\"}}}" > /kaniko/.docker/config.json
-    - cd $CI_PROJECT_DIR/services/prometheus/
+    - cd $CI_PROJECT_DIR/services/monitoring/prometheus/
     - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination $REGISTRY_USERNAME/prometheus_prg:$CI_COMMIT_SHA
 
 build alertmanager_prg:
@@ -54,7 +54,7 @@ build alertmanager_prg:
   script:
     - echo 'Building...'
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_BASE64\"}}}" > /kaniko/.docker/config.json
-    - cd $CI_PROJECT_DIR/services/alertmanager/
+    - cd $CI_PROJECT_DIR/services/monitoring/alertmanager/
     - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination $REGISTRY_USERNAME/alertmanager_prg:$CI_COMMIT_SHA
 
 build rabbitmq:
