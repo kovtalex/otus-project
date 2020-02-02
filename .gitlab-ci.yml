@@ -49,7 +49,7 @@ build ui:
     - cd $CI_PROJECT_DIR/src/search_engine_ui/
     - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination kovtalex/search_engine_ui:$CI_COMMIT_SHA
 
-  build crawler:
+build crawler:
   stage: build
   image:
     name: gcr.io/kaniko-project/executor:v0.16.0
