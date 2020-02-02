@@ -11,6 +11,7 @@ services:
   rabbitmq:
     image: ${REGISTRY_USERNAME}/rabbitmq:${RABBITMQ_VER}
     restart: on-failure
+    hostname: rabbit
     ports:
       - 15672:15672
     volumes:
