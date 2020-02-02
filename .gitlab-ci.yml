@@ -1,39 +1,12 @@
 stages:
-  - build
   - testing
+  - build
+  - push
   - staging
   - preprod
   - production
 
-variables:
-  GOOGLE_PROJECT_ID: docker-258208
-  GOOGLE_COMPUTE_ZONE: europe-west1-b
-
-build_feature_job:
-  stage: build
-  image:
-    name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [""]
-  script:
-    - echo 'Building...'
-    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_BASE64\"}}}" > /kaniko/.docker/config.json
-    - cd $CI_PROJECT_DIR/src/search_engine_crawler/
-    - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination kovtalex/search_engine_crawler:$CI_COMMIT_TAG
-    - cd $CI_PROJECT_DIR/src/search_engine_ui/
-    - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination kovtalex/search_engine_ui:$CI_COMMIT_TAG
-
-build_infra_job:
-  stage: build
-  image:
-    name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [""]
-  script:
-    - echo 'Building...'
-    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_BASE64\"}}}" > /kaniko/.docker/config.json
-    - cd $CI_PROJECT_DIR/services/rabbitmq/
-    - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination kovtalex/rabbitmq:$CI_COMMIT_TAG
-
-test unit1:
+test unit:
   stage: testing
   image: python:3.6.0-alpine
   script:
@@ -43,11 +16,6 @@ test unit1:
     - python -m unittest discover -s tests/ 
     - coverage run -m unittest discover -s tests/ 
     - coverage report --include crawler/crawler.py
-
-test unit2:
-  stage: testing
-  image: python:3.6.0-alpine
-  script:
     - echo "test unit search_engine_ui"
     - cd $CI_PROJECT_DIR/src/search_engine_ui/
     - pip install -r requirements.txt -r requirements-test.txt
@@ -55,7 +23,60 @@ test unit2:
     - coverage run -m unittest discover -s tests/ 
     - coverage report --include ui/ui.py
 
-deploy_dev_job:
+build job:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:latest
+    entrypoint: [""]
+  script:
+    - echo 'Building...'
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_BASE64\"}}}" > /kaniko/.docker/config.json
+    - cd $CI_PROJECT_DIR/src/search_engine_crawler/
+    - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination kovtalex/search_engine_crawler:$CI_COMMIT_SHA
+    - cd $CI_PROJECT_DIR/src/search_engine_ui/
+    - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination kovtalex/search_engine_ui:$CI_COMMIT_SHA
+    - cd $CI_PROJECT_DIR/services/rabbitmq/
+    - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination kovtalex/rabbitmq:$CI_COMMIT_SHA
+
+push latest:
+image: docker:19
+  variables:
+    GIT_STRATEGY: none
+  stage: push
+  only:
+    - master
+  script:
+    - echo -n $CI_REGISTRY_PASS | docker login -u kovtalex --password-stdin
+    - docker pull kovtalex/rabbitmq:$CI_COMMIT_SHA
+    - docker pull kovtalex/search_engine_ui:$CI_COMMIT_SHA
+    - docker pull kovtalex/search_engine_crawler:$CI_COMMIT_SHA
+    - docker tag kovtalex/rabbitmq:$CI_COMMIT_SHA kovtalex/rabbitmq:latest
+    - docker tag kovtalex/search_engine_ui:$CI_COMMIT_SHA kovtalex/search_engine_ui:latest
+    - docker tag kovtalex/search_engine_crawler:$CI_COMMIT_SHA kovtalex/search_engine_crawler:latest
+    - docker push kovtalex/rabbitmq:latest
+    - docker push kovtalex/search_engine_ui:latest
+    - docker push kovtalex/search_engine_crawler:latest
+
+push tag:
+image: docker:19
+  variables:
+    GIT_STRATEGY: none
+  stage: push
+  only:
+    - tags
+  script:
+    - echo -n $CI_REGISTRY_PASS | docker login -u kovtalex --password-stdin
+    - docker pull kovtalex/rabbitmq:$CI_COMMIT_SHA
+    - docker pull kovtalex/search_engine_ui:$CI_COMMIT_SHA
+    - docker pull kovtalex/search_engine_crawler:$CI_COMMIT_SHA
+    - docker tag kovtalex/rabbitmq:$CI_COMMIT_SHA kovtalex/rabbitmq:$CI_COMMIT_REF_NAME
+    - docker tag kovtalex/search_engine_ui:$CI_COMMIT_SHA kovtalex/search_engine_ui:$CI_COMMIT_REF_NAME
+    - docker tag kovtalex/search_engine_crawler:$CI_COMMIT_SHA kovtalex/search_engine_crawler:$CI_COMMIT_REF_NAME
+    - docker push kovtalex/rabbitmq:$CI_COMMIT_REF_NAME
+    - docker push kovtalex/search_engine_ui:$CI_COMMIT_REF_NAME
+    - docker push kovtalex/search_engine_crawler:$CI_COMMIT_REF_NAME
+
+deploy dev job:
   stage: staging
   image: google/cloud-sdk
   script:
@@ -64,7 +85,7 @@ deploy_dev_job:
     - gcloud --quiet config set project $GOOGLE_PROJECT_ID
     - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
     - gcloud compute scp --recurse docker docker-host-dev:~
-    - gcloud compute ssh docker-host-dev --command="cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml up -d"
+    - gcloud compute ssh docker-host-dev --command="export RABBITMQ_VER=$CI_COMMIT_SHA && export UI_VER=$CI_COMMIT_SHA && export CRAWLER_VER=$CI_COMMIT_SHA && cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml up -d"
   environment:
     name: dev
     url: http://35.241.227.40/
@@ -81,11 +102,10 @@ preprod:
     - gcloud compute ssh docker-host-preprod --command="cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml up -d"
   when: manual
   only:
-    - /^\d+\.\d+\.\d+/
-    - master
+    - tags
   environment:
     name: stage
-    url: https://35.233.5.5/
+    url: http://35.233.5.5/
 
 production:
   stage: production
@@ -99,8 +119,7 @@ production:
     - gcloud compute ssh docker-host-prod --command="cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml up -d"
   when: manual
   only:
-    - /^\d+\.\d+\.\d+/  
-    - master
+    - tags
   environment:
     name: production
-    url: https://35.195.140.173/
+    url: http://35.195.140.173/
