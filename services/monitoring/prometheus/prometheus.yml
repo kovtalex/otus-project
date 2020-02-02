@@ -21,12 +21,12 @@ scrape_configs:
   - job_name: 'search_engine_ui'
     static_configs:
       - targets:
-        - 'ui:search_engine_ui:8000'
+        - 'ui:8000'
 
   - job_name: 'search_engine_crawler'
     static_configs:
       - targets:
-        - 'search_engine_crawler:8000'
+        - 'crawler:8000'
 
   - job_name: 'rabbitmq'
     static_configs:
