@@ -2,6 +2,7 @@ version: '3.7'
 services:
   mongo:
     image: mongo:${MONGO_VER}
+    restart: on-failure
     volumes:
       - mongo_db:/data/db
     networks:
@@ -9,6 +10,7 @@ services:
 
   rabbitmq:
     image: kovtalex/rabbitmq:${RABBITMQ_VER}
+    restart: on-failure
     ports:
       - 15672:15672/tcp
     networks:
@@ -16,6 +18,7 @@ services:
  
   ui:
     image: kovtalex/search_engine_ui:${UI_VER}
+    restart: on-failure
     environment:
       - MONGO=mongo
       - MONGO_PORT=27017
@@ -28,6 +31,7 @@ services:
 
   crawler:
     image: kovtalex/search_engine_crawler:${CRAWLER_VER}
+    restart: on-failure
     environment:
       - MONGO=mongo
       - MONGO_PORT=27017
