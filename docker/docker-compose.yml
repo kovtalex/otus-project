@@ -29,6 +29,11 @@ services:
       - 80:8000
     depends_on:
       - mongo
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: service.ui
     networks:
       back_net:
 
@@ -48,6 +53,11 @@ services:
     depends_on:
       - mongo
       - rabbitmq
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: service.crawler
     networks:
       back_net:
 
