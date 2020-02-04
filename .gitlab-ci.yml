@@ -184,45 +184,36 @@ deploy dev:
     - gcloud --quiet config set project $GOOGLE_PROJECT_ID
     - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
     - gcloud compute scp --recurse docker docker-host-dev:~
-    - gcloud compute ssh docker-host-dev --command="export REGISTRY_USERNAME=$REGISTRY_USERNAME && mkdir -p /root/docker && export RABBITMQ_VER=$CI_COMMIT_SHA && export UI_VER=$CI_COMMIT_SHA && export CRAWLER_VER=$CI_COMMIT_SHA && export PROMETHEUS_VER=$CI_COMMIT_SHA && export ALERTMANAGER_VER=$CI_COMMIT_SHA && export GRAFANA_VER=$CI_COMMIT_SHA && cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml up -d && docker-compose -f docker-compose-monitoring.yml up -d"
+    - gcloud compute ssh docker-host-dev --command="export REGISTRY_USERNAME=$REGISTRY_USERNAME && mkdir -p /root/docker && export RABBITMQ_VER=$CI_COMMIT_SHA && export UI_VER=$CI_COMMIT_SHA && export CRAWLER_VER=$CI_COMMIT_SHA && export PROMETHEUS_VER=$CI_COMMIT_SHA && export ALERTMANAGER_VER=$CI_COMMIT_SHA && export GRAFANA_VER=$CI_COMMIT_SHA && cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml docker-compose-monitoring.yml down && docker-compose -f docker-compose.yml docker-compose-monitoring.yml up -d"
   environment:
     name: dev
     url: http://35.195.52.130/
 
 deploy preprod:
-  stage: preprod
-  image: google/cloud-sdk
-  tags:
-    - docker
-  script:
-    - echo 'Deploy Preproduction env'
-    - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
-    - gcloud --quiet config set project $GOOGLE_PROJECT_ID
-    - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
-    - gcloud compute scp --recurse docker docker-host-preprod:~
-    - gcloud compute ssh docker-host-preprod --command="export REGISTRY_USERNAME=$REGISTRY_USERNAME && mkdir -p /root/docker && cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml up -d && docker-compose -f docker-compose-monitoring.yml up -d"
-  when: manual
-  only:
-    - master
+  <<: *deploy
   environment:
-    name: stage
+    name: preprod
     url: http://34.76.187.247/
 
 deploy production:
+  <<: *deploy
+  environment:
+    name: prod
+    url: http://35.205.160.135/
+
+
+.deploy: &deploy
   stage: production
   image: google/cloud-sdk
   tags:
     - docker
   script:
-    - echo 'Deploy Production env'
+    - echo 'Deploy $CI_ENVIRONMENT_NAME env'
     - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
     - gcloud --quiet config set project $GOOGLE_PROJECT_ID
     - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
-    - gcloud compute scp --recurse docker docker-host-prod:~
-    - gcloud compute ssh docker-host-prod --command="export REGISTRY_USERNAME=$REGISTRY_USERNAME && mkdir -p /root/docker && cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml up -d && docker-compose -f docker-compose-monitoring.yml up -d"
+    - gcloud compute scp --recurse docker docker-host-$CI_ENVIRONMENT_NAME:~
+    - gcloud compute ssh docker-host-$CI_ENVIRONMENT_NAME --command="export REGISTRY_USERNAME=$REGISTRY_USERNAME && mkdir -p /root/docker && cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml docker-compose-monitoring.yml down && docker-compose -f docker-compose.yml docker-compose-monitoring.yml up -d"
   when: manual
   only:
     - master
-  environment:
-    name: production
-    url: http://35.205.160.135/
