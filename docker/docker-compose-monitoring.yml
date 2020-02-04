@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   prometheus:
-    image: ${REGISTRY_USERNAME}/prometheus_prj:${PROMETHEUS_VER}
+    image: ${CI_REGISTRY_USERNAME}/prometheus_prj:${PROMETHEUS_VER}
     restart: on-failure
     ports:
       - '9090:9090'
@@ -15,7 +15,7 @@ services:
       back_net:
 
   grafana:
-    image: ${REGISTRY_USERNAME}/grafana_prj:${GRAFANA_VER}
+    image: ${CI_REGISTRY_USERNAME}/grafana_prj:${GRAFANA_VER}
     restart: on-failure
     volumes:
       - grafana_data:/var/lib/grafana
@@ -30,7 +30,7 @@ services:
       back_net:
 
   alertmanager:
-    image: ${REGISTRY_USERNAME}/alertmanager_prj:${ALERTMANAGER_VER}
+    image: ${CI_REGISTRY_USERNAME}/alertmanager_prj:${ALERTMANAGER_VER}
     restart: on-failure
     command:
       - '--config.file=/etc/alertmanager/config.yml'
@@ -40,7 +40,7 @@ services:
       back_net:
 
   mongodb-exporter:
-    image: ${REGISTRY_USERNAME}/mongodb_exporter:${MONGODB_EXPORTER_VER}
+    image: ${CI_REGISTRY_USERNAME}/mongodb_exporter:${MONGODB_EXPORTER_VER}
     restart: on-failure
     command:
       '--mongodb.uri=mongodb://mongo:27017'

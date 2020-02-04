@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   fluentd:
-    image: ${REGISTRY_USERNAME}/fluentd_prj:${FLUENTD_VER}
+    image: ${CI_REGISTRY_USERNAME}/fluentd_prj:${FLUENTD_VER}
     restart: on-failure
     ports:
       - "24224:24224"

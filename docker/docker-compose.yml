@@ -9,7 +9,7 @@ services:
       back_net:
 
   rabbitmq:
-    image: ${REGISTRY_USERNAME}/rabbitmq:${RABBITMQ_VER}
+    image: ${CI_REGISTRY_USERNAME}/rabbitmq:${RABBITMQ_VER}
     restart: on-failure
     hostname: rabbit
     volumes:
@@ -20,7 +20,7 @@ services:
       back_net:
  
   ui:
-    image: ${REGISTRY_USERNAME}/search_engine_ui:${UI_VER}
+    image: ${CI_REGISTRY_USERNAME}/search_engine_ui:${UI_VER}
     restart: on-failure
     environment:
       - MONGO=mongo
@@ -33,7 +33,7 @@ services:
       back_net:
 
   crawler:
-    image: ${REGISTRY_USERNAME}/search_engine_crawler:${CRAWLER_VER}
+    image: ${CI_REGISTRY_USERNAME}/search_engine_crawler:${CRAWLER_VER}
     restart: on-failure
     environment:
       - MONGO=mongo
