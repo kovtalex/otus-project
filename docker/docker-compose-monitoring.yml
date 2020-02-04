@@ -35,7 +35,28 @@ services:
       - 9093:9093
     networks:
       back_net:
-    
+
+  mongodb-exporter:
+    image: ${REGISTRY_USERNAME}/mongodb_exporter:${MONGODB_EXPORTER_VER}
+    command:
+      '--mongodb.uri=mongodb://mongo:27017'
+    networks:
+      back_net:
+
+  node-exporter:
+    image: prom/node-exporter:${NODE_EXPORTER_VER}
+    user: root
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points="^/(sys|proc|dev|host|etc)($$|/)"'
+    networks:
+      back_net:
+
 volumes:
   prometheus_data:
   grafana_data:

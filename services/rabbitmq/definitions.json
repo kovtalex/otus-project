@@ -38,10 +38,7 @@
       "vhost": "/",
       "durable": false,
       "auto_delete": false,
-      "arguments":{ 
-        "x-message-ttl":60000,
-        "x-queue-type":"classic"
-      }
+      "arguments": []
     }
   ],
   "exchanges": [],
