@@ -6,6 +6,21 @@ stages:
   - preprod
   - production
 
+.deploy: &deploy
+  image: google/cloud-sdk
+  tags:
+    - docker
+  script:
+    - echo 'Deploy $CI_ENVIRONMENT_NAME env'
+    - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+    - gcloud --quiet config set project $GOOGLE_PROJECT_ID
+    - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
+    - gcloud compute scp --recurse docker docker-host-$CI_ENVIRONMENT_NAME:~
+    - gcloud compute ssh docker-host-$CI_ENVIRONMENT_NAME --command="export REGISTRY_USERNAME=$REGISTRY_USERNAME && mkdir -p /root/docker && cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml docker-compose-monitoring.yml down && docker-compose -f docker-compose.yml docker-compose-monitoring.yml up -d"
+  when: manual
+  only:
+    - master
+
 test unit crawler:
   stage: testing
   image: python:3.6.0-alpine
@@ -190,30 +205,16 @@ deploy dev:
     url: http://35.195.52.130/
 
 deploy preprod:
-  <<: *deploy
+  stage: preprod
   environment:
     name: preprod
     url: http://34.76.187.247/
 
-deploy production:
   <<: *deploy
+
+deploy production:
+  stage: production
   environment:
     name: prod
     url: http://35.205.160.135/
-
-
-.deploy: &deploy
-  stage: production
-  image: google/cloud-sdk
-  tags:
-    - docker
-  script:
-    - echo 'Deploy $CI_ENVIRONMENT_NAME env'
-    - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
-    - gcloud --quiet config set project $GOOGLE_PROJECT_ID
-    - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
-    - gcloud compute scp --recurse docker docker-host-$CI_ENVIRONMENT_NAME:~
-    - gcloud compute ssh docker-host-$CI_ENVIRONMENT_NAME --command="export REGISTRY_USERNAME=$REGISTRY_USERNAME && mkdir -p /root/docker && cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml docker-compose-monitoring.yml down && docker-compose -f docker-compose.yml docker-compose-monitoring.yml up -d"
-  when: manual
-  only:
-    - master
+  <<: *deploy
