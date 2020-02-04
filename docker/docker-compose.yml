@@ -12,8 +12,6 @@ services:
     image: ${CI_REGISTRY_USERNAME}/rabbitmq:${RABBITMQ_VER}
     restart: on-failure
     hostname: rabbit
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq:rw
     ports:
       - 15672:15672
     networks:
@@ -63,7 +61,6 @@ services:
 
 volumes:
   mongo_db:
-  rabbitmq_data:
 
 networks:
   back_net:

@@ -19,6 +19,15 @@
 - Dockefile's сервисов alertmanager, grafana, prometheus, rabbitmq и приложения
 - .gitlab-ci.yml с описание пайплайна gitlab
 
+## Доступ к сервисам
+
+- <http://URL:80> - веб-интерфейс поиска слов и фраз на проиндексированных ботом сайтах.
+- <http://URL:15672> - менеджмент RabbitMQ.
+- <http://URL:9090> - Prometheus.
+- <http://URL:3000> - Grafana.
+- <http://URL:9093> - AlertManager.
+- <http://URL:5601> - Kibana.
+
 ## Описание пайплайна
 
 - юнит тесты микросервисов приложения.
