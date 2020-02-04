@@ -38,7 +38,7 @@
       "vhost": "/",
       "durable": false,
       "auto_delete": false,
-      "arguments": {}
+      "arguments": []
     }
   ],
   "exchanges": [],
