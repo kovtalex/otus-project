@@ -202,19 +202,18 @@ deploy dev:
     - gcloud compute ssh docker-host-dev --command="export REGISTRY_USERNAME=$REGISTRY_USERNAME && mkdir -p /root/docker && export RABBITMQ_VER=$CI_COMMIT_SHA && export UI_VER=$CI_COMMIT_SHA && export CRAWLER_VER=$CI_COMMIT_SHA && export PROMETHEUS_VER=$CI_COMMIT_SHA && export ALERTMANAGER_VER=$CI_COMMIT_SHA && export GRAFANA_VER=$CI_COMMIT_SHA && cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml -f docker-compose-monitoring.yml down && docker-compose -f docker-compose.yml -f docker-compose-monitoring.yml up -d"
   environment:
     name: dev
-    url: http://35.195.52.130/
+    url: http://35.210.56.54/
 
 deploy preprod:
   stage: preprod
   environment:
     name: preprod
-    url: http://34.76.187.247/
-
+    url: http://35.210.180.128/
   <<: *deploy
 
 deploy production:
   stage: production
   environment:
     name: prod
-    url: http://35.205.160.135/
+    url: http://35.210.167.65/
   <<: *deploy

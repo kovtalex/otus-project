@@ -2,7 +2,6 @@ version: '3.7'
 services:
   mongo:
     image: mongo:${MONGO_VER}
-    restart: on-failure
     volumes:
       - mongo_db:/data/db
     networks:
@@ -10,7 +9,6 @@ services:
 
   rabbitmq:
     image: ${REGISTRY_USERNAME}/rabbitmq:${RABBITMQ_VER}
-    restart: on-failure
     hostname: rabbit
     ports:
       - 15672:15672
@@ -19,7 +17,6 @@ services:
  
   ui:
     image: ${REGISTRY_USERNAME}/search_engine_ui:${UI_VER}
-    restart: on-failure
     environment:
       - MONGO=mongo
       - MONGO_PORT=27017
@@ -32,7 +29,6 @@ services:
 
   crawler:
     image: ${REGISTRY_USERNAME}/search_engine_crawler:${CRAWLER_VER}
-    restart: on-failure
     environment:
       - MONGO=mongo
       - MONGO_PORT=27017
