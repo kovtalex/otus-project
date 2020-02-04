@@ -10,7 +10,7 @@
 
 - Логирование. Можно искать к примеру по сервисам: service : web, service : crawler.
 - Добавлен node_exporter, mongo_exporter, fluentd.
-- В образ grafana добавлен дашборд мониторинга MongoDB.
+- В образ grafana добавлен дашборд мониторинга MongoDB, Docker, Node-exporter, Application.
 
 ### Изменено
 
