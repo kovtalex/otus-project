@@ -1,0 +1,32 @@
+version: '3.7'
+services:
+  fluentd:
+    image: ${REGISTRY_USERNAME}/fluentd_prj:${FLUENTD_VER}
+    restart: on-failure
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    networks:
+      back_net:
+
+  elasticsearch:
+    image: elasticsearch:${ELASTICSEARCH_VER}
+    restart: on-failure
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+    networks:
+      back_net:
+
+  kibana:
+    image: kibana:${KIBANA_VER}
+    restart: on-failure
+    ports:
+      - "5601:5601"
+    networks:
+      back_net:
+
+networks:
+  back_net:

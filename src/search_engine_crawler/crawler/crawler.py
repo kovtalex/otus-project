@@ -43,7 +43,7 @@ def connect_to_mq():
         rabbit = BlockingConnection(ConnectionParameters(
             host=mqhost,
             connection_attempts=10,
-            retry_delay=10,
+            retry_delay=1,
             credentials=credentials))
     except Exception as e:
         log.error('connect_to_MQ',
