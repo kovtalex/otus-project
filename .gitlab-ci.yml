@@ -16,7 +16,7 @@ stages:
     - gcloud --quiet config set project $GOOGLE_PROJECT_ID
     - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
     - gcloud compute scp --recurse docker docker-host-$CI_ENVIRONMENT_NAME:~
-    - gcloud compute ssh docker-host-$CI_ENVIRONMENT_NAME --command="export REGISTRY_USERNAME=$REGISTRY_USERNAME && mkdir -p /root/docker && cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml docker-compose-monitoring.yml down && docker-compose -f docker-compose.yml docker-compose-monitoring.yml up -d"
+    - gcloud compute ssh docker-host-$CI_ENVIRONMENT_NAME --command="export REGISTRY_USERNAME=$REGISTRY_USERNAME && mkdir -p /root/docker && cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml -f docker-compose-monitoring.yml down && docker-compose -f docker-compose.yml -f docker-compose-monitoring.yml up -d"
   when: manual
   only:
     - master
@@ -199,7 +199,7 @@ deploy dev:
     - gcloud --quiet config set project $GOOGLE_PROJECT_ID
     - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
     - gcloud compute scp --recurse docker docker-host-dev:~
-    - gcloud compute ssh docker-host-dev --command="export REGISTRY_USERNAME=$REGISTRY_USERNAME && mkdir -p /root/docker && export RABBITMQ_VER=$CI_COMMIT_SHA && export UI_VER=$CI_COMMIT_SHA && export CRAWLER_VER=$CI_COMMIT_SHA && export PROMETHEUS_VER=$CI_COMMIT_SHA && export ALERTMANAGER_VER=$CI_COMMIT_SHA && export GRAFANA_VER=$CI_COMMIT_SHA && cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml docker-compose-monitoring.yml down && docker-compose -f docker-compose.yml docker-compose-monitoring.yml up -d"
+    - gcloud compute ssh docker-host-dev --command="export REGISTRY_USERNAME=$REGISTRY_USERNAME && mkdir -p /root/docker && export RABBITMQ_VER=$CI_COMMIT_SHA && export UI_VER=$CI_COMMIT_SHA && export CRAWLER_VER=$CI_COMMIT_SHA && export PROMETHEUS_VER=$CI_COMMIT_SHA && export ALERTMANAGER_VER=$CI_COMMIT_SHA && export GRAFANA_VER=$CI_COMMIT_SHA && cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml -f docker-compose-monitoring.yml down && docker-compose -f docker-compose.yml -f docker-compose-monitoring.yml up -d"
   environment:
     name: dev
     url: http://35.195.52.130/
