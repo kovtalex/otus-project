@@ -53,6 +53,7 @@ services:
 
 volumes:
   mongo_db:
+  rabbitmq_data:
 
 networks:
   back_net:
