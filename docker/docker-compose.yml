@@ -45,8 +45,8 @@ services:
       - RMQ_QUEUE=urls
       - RMQ_USERNAME=guest
       - RMQ_PASSWORD=guest
-      - CHECK_INTERVAL=60
-      - URL=https://vitkhab.github.io/search_engine_test_site/
+      - CHECK_INTERVAL=300
+      - URL=https://gzmland.ru/
       - EXCLUDE_URLS=.*github.com
     depends_on:
       - mongo
