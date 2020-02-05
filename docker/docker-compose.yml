@@ -9,7 +9,7 @@ services:
       back_net:
 
   rabbitmq:
-    image: ${REGISTRY_USERNAME}/rabbitmq:${RABBITMQ_VER}
+    image: ${CI_REGISTRY_USERNAME}/rabbitmq:${RABBITMQ_VER}
     restart: on-failure
     hostname: rabbit
     ports:
@@ -18,7 +18,7 @@ services:
       back_net:
  
   ui:
-    image: ${REGISTRY_USERNAME}/search_engine_ui:${UI_VER}
+    image: ${CI_REGISTRY_USERNAME}/search_engine_ui:${UI_VER}
     restart: on-failure
     environment:
       - MONGO=mongo
@@ -27,11 +27,16 @@ services:
       - 80:8000
     depends_on:
       - mongo
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: service.ui
     networks:
       back_net:
 
   crawler:
-    image: ${REGISTRY_USERNAME}/search_engine_crawler:${CRAWLER_VER}
+    image: ${CI_REGISTRY_USERNAME}/search_engine_crawler:${CRAWLER_VER}
     restart: on-failure
     environment:
       - MONGO=mongo
@@ -46,6 +51,11 @@ services:
     depends_on:
       - mongo
       - rabbitmq
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: service.crawler
     networks:
       back_net:
 

@@ -32,15 +32,7 @@
     }
   ],
   "policies": [],
-  "queues": [
-    {
-      "name": "urls",
-      "vhost": "/",
-      "durable": false,
-      "auto_delete": false,
-      "arguments": []
-    }
-  ],
+  "queues": [],
   "exchanges": [],
   "bindings": []
 }

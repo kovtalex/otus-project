@@ -1,36 +1,4 @@
 {
-  "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "6.0.0"
-    },
-    {
-      "type": "datasource",
-      "id": "prometheus",
-      "name": "prometheus",
-      "version": "1.0.0"
-    },
-    {
-      "type": "table",
-      "id": "table",
-      "name": "Table",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "graph",
-      "name": "Graph",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "singlestat",
-      "name": "Singlestat",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
@@ -48,8 +16,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "id": null,
-  "iteration": 1571651876406,
+  "id": 2,
+  "iteration": 1580850222166,
   "links": [
     {
       "icon": "doc",
@@ -968,6 +936,7 @@
       "styles": [
         {
           "alias": "Erlang/OTP",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(50, 172, 45, 0.97)",
@@ -987,6 +956,7 @@
         },
         {
           "alias": "RabbitMQ",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -1005,6 +975,7 @@
         },
         {
           "alias": "Host",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -1023,6 +994,7 @@
         },
         {
           "alias": "Node",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -1041,6 +1013,7 @@
         },
         {
           "alias": "",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -1087,6 +1060,7 @@
         "x": 0,
         "y": 11
       },
+      "hiddenSeries": false,
       "id": 7,
       "legend": {
         "alignAsTable": true,
@@ -1239,6 +1213,7 @@
         "x": 12,
         "y": 11
       },
+      "hiddenSeries": false,
       "id": 8,
       "legend": {
         "alignAsTable": true,
@@ -1391,6 +1366,7 @@
         "x": 20,
         "y": 11
       },
+      "hiddenSeries": false,
       "id": 2,
       "legend": {
         "alignAsTable": true,
@@ -1544,6 +1520,7 @@
         "x": 20,
         "y": 15
       },
+      "hiddenSeries": false,
       "id": 5,
       "legend": {
         "alignAsTable": true,
@@ -1710,6 +1687,7 @@
         "x": 0,
         "y": 20
       },
+      "hiddenSeries": false,
       "id": 9,
       "legend": {
         "alignAsTable": true,
@@ -1846,6 +1824,7 @@
         "x": 12,
         "y": 20
       },
+      "hiddenSeries": false,
       "id": 19,
       "legend": {
         "alignAsTable": true,
@@ -1996,6 +1975,7 @@
         "x": 0,
         "y": 26
       },
+      "hiddenSeries": false,
       "id": 13,
       "legend": {
         "alignAsTable": true,
@@ -2132,6 +2112,7 @@
         "x": 12,
         "y": 26
       },
+      "hiddenSeries": false,
       "id": 18,
       "legend": {
         "alignAsTable": true,
@@ -2268,6 +2249,7 @@
         "x": 0,
         "y": 31
       },
+      "hiddenSeries": false,
       "id": 61,
       "legend": {
         "alignAsTable": true,
@@ -2404,6 +2386,7 @@
         "x": 12,
         "y": 31
       },
+      "hiddenSeries": false,
       "id": 12,
       "legend": {
         "alignAsTable": true,
@@ -2540,6 +2523,7 @@
         "x": 0,
         "y": 36
       },
+      "hiddenSeries": false,
       "id": 34,
       "legend": {
         "alignAsTable": true,
@@ -2649,6 +2633,7 @@
         "x": 12,
         "y": 36
       },
+      "hiddenSeries": false,
       "id": 16,
       "legend": {
         "alignAsTable": true,
@@ -2772,6 +2757,7 @@
         "x": 0,
         "y": 42
       },
+      "hiddenSeries": false,
       "id": 14,
       "legend": {
         "alignAsTable": true,
@@ -2908,6 +2894,7 @@
         "x": 12,
         "y": 42
       },
+      "hiddenSeries": false,
       "id": 15,
       "legend": {
         "alignAsTable": true,
@@ -5305,7 +5292,7 @@
     }
   ],
   "refresh": "15s",
-  "schemaVersion": 18,
+  "schemaVersion": 22,
   "style": "dark",
   "tags": [
     "rabbitmq-prometheus"
@@ -5314,7 +5301,10 @@
     "list": [
       {
         "allValue": null,
-        "current": {},
+        "current": {
+          "text": "rabbit@rabbit",
+          "value": "rabbit@rabbit"
+        },
         "datasource": null,
         "definition": "label_values(rabbitmq_identity_info, rabbitmq_cluster)",
         "hide": 0,
@@ -5337,7 +5327,7 @@
     ]
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-12h",
     "to": "now"
   },
   "timepicker": {
