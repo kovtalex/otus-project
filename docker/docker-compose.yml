@@ -45,7 +45,7 @@ services:
       - RMQ_QUEUE=urls
       - RMQ_USERNAME=guest
       - RMQ_PASSWORD=guest
-      - CHECK_INTERVAL=300
+      - CHECK_INTERVAL=3600
       - URL=https://gzmland.ru/
       - EXCLUDE_URLS=.*github.com
     depends_on:
