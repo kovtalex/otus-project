@@ -137,15 +137,6 @@ push tag:
     - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
     - gcloud --quiet config set project $GOOGLE_PROJECT_ID
     - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
-    - gcloud compute scp --recurse docker docker-host-$CI_ENVIRONMENT_NAME:~
-
-deploy dev:
-  stage: staging
-  environment:
-    name: dev
-    url: $URL_DEV
-  <<: *deploy
-  script:
     - echo "export CI_REGISTRY_USERNAME=$CI_REGISTRY_USERNAME" >> $CI_PROJECT_DIR/docker/tag
     - echo "export RABBITMQ_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo \"latest\"; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag
     - echo "export UI_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo \"latest\"; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag
@@ -155,6 +146,15 @@ deploy dev:
     - echo "export GRAFANA_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo \"latest\"; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag
     - echo "export FLUENTD_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo \"latest\"; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag
     - cat $CI_PROJECT_DIR/docker/tag
+    - gcloud compute scp --recurse docker docker-host-$CI_ENVIRONMENT_NAME:~
+
+deploy dev:
+  stage: staging
+  environment:
+    name: dev
+    url: $URL_DEV
+  <<: *deploy
+  script:
     - gcloud compute ssh docker-host-dev --command="mkdir -p /root/docker && cd ~/docker && mv -f .env.example .env"
     - gcloud compute ssh docker-host-dev --command="cd ~/docker && source tag && docker-compose -f docker-compose-logging.yml down"
     - gcloud compute ssh docker-host-dev --command="cd ~/docker && source tag && docker-compose -f docker-compose-monitoring.yml down"
