@@ -1,163 +1,79 @@
 stages:
-  - testing
   - build
+  - testing
   - push
   - staging
   - preprod
   - production
 
-test unit crawler:
-  stage: testing
-  image: python:3.6.0-alpine
-  tags:
-    - docker
-  script:
-    - echo "test unit search_engine_crawler"
-    - cd $CI_PROJECT_DIR/src/search_engine_crawler/
-    - pip install -r requirements.txt -r requirements-test.txt
-    - python -m unittest discover -s tests/ 
-    - coverage run -m unittest discover -s tests/ 
-    - coverage report --include crawler/crawler.py
-test unit ui:
-  stage: testing
-  image: python:3.6.0-alpine
-  tags:
-    - docker
-  script:
-    - echo "test unit search_engine_ui"
-    - cd $CI_PROJECT_DIR/src/search_engine_ui/
-    - pip install -r requirements.txt -r requirements-test.txt
-    - python -m unittest discover -s tests/ 
-    - coverage run -m unittest discover -s tests/ 
-    - coverage report --include ui/ui.py
-
-build prometheus:
+.template: &build 
   stage: build
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
-  tags:
-    - docker
-  script:
+  before_script:
     - echo 'Building...'
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_BASE64\"}}}" > /kaniko/.docker/config.json
+  tags:
+    - docker
+
+build prometheus:
+  <<: *build
+  script:
     - cd $CI_PROJECT_DIR/services/monitoring/prometheus/
     - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination $CI_REGISTRY_USERNAME/prometheus_prj:$CI_COMMIT_SHA
 
 build grafana:
-  stage: build
-  image:
-    name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [""]
-  tags:
-    - docker
+  <<: *build
   script:
-    - echo 'Building...'
-    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_BASE64\"}}}" > /kaniko/.docker/config.json
     - cd $CI_PROJECT_DIR/services/monitoring/grafana/
     - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination $CI_REGISTRY_USERNAME/grafana_prj:$CI_COMMIT_SHA
 
 build alertmanager:
-  stage: build
-  image:
-    name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [""]
-  tags:
-    - docker
+  <<: *build
   script:
-    - echo 'Building...'
-    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_BASE64\"}}}" > /kaniko/.docker/config.json
     - cd $CI_PROJECT_DIR/services/monitoring/alertmanager/
     - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination $CI_REGISTRY_USERNAME/alertmanager_prj:$CI_COMMIT_SHA
 
 build fluentd:
-  stage: build
-  image:
-    name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [""]
-  tags:
-    - docker
+  <<: *build
   script:
-    - echo 'Building...'
-    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_BASE64\"}}}" > /kaniko/.docker/config.json
     - cd $CI_PROJECT_DIR/services/logging/fluentd/
     - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination $CI_REGISTRY_USERNAME/fluentd_prj:$CI_COMMIT_SHA
 
 build rabbitmq:
-  stage: build
-  image:
-    name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [""]
-  tags:
-    - docker
+  <<: *build
   script:
-    - echo 'Building...'
-    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_BASE64\"}}}" > /kaniko/.docker/config.json
     - cd $CI_PROJECT_DIR/services/rabbitmq/
     - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination $CI_REGISTRY_USERNAME/rabbitmq:$CI_COMMIT_SHA
 
 build ui:
-  stage: build
-  image:
-    name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [""]
-  tags:
-    - docker
+  <<: *build
   script:
-    - echo 'Building...'
-    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_BASE64\"}}}" > /kaniko/.docker/config.json
     - cd $CI_PROJECT_DIR/src/search_engine_ui/
     - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination $CI_REGISTRY_USERNAME/search_engine_ui:$CI_COMMIT_SHA
 
 build crawler:
-  stage: build
-  image:
-    name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [""]
-  tags:
-    - docker
+  <<: *build
   script:
-    - echo 'Building...'
-    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_BASE64\"}}}" > /kaniko/.docker/config.json
     - cd $CI_PROJECT_DIR/src/search_engine_crawler/
     - /kaniko/executor --context ./ --dockerfile ./Dockerfile --destination $CI_REGISTRY_USERNAME/search_engine_crawler:$CI_COMMIT_SHA
 
-push latest:
-  stage: push  
+test unit:
+  stage: testing
   image: docker:19
   services:
     - docker:dind
-  variables:
-    GIT_STRATEGY: none
   tags:
     - docker
   script:
-    - echo -n $CI_REGISTRY_PASS | docker login --username $CI_REGISTRY_USERNAME --password-stdin $CI_REGISTRY
-    - docker pull $CI_REGISTRY_USERNAME/prometheus_prj:$CI_COMMIT_SHA
-    - docker pull $CI_REGISTRY_USERNAME/grafana_prj:$CI_COMMIT_SHA
-    - docker pull $CI_REGISTRY_USERNAME/alertmanager_prj:$CI_COMMIT_SHA
-    - docker pull $CI_REGISTRY_USERNAME/fluentd_prj:$CI_COMMIT_SHA
-    - docker pull $CI_REGISTRY_USERNAME/rabbitmq:$CI_COMMIT_SHA
-    - docker pull $CI_REGISTRY_USERNAME/search_engine_ui:$CI_COMMIT_SHA
+    - echo "test unit..."
     - docker pull $CI_REGISTRY_USERNAME/search_engine_crawler:$CI_COMMIT_SHA
-    - docker tag $CI_REGISTRY_USERNAME/prometheus_prj:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/prometheus_prj:latest
-    - docker tag $CI_REGISTRY_USERNAME/grafana_prj:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/grafana_prj:latest
-    - docker tag $CI_REGISTRY_USERNAME/alertmanager_prj:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/alertmanager_prj:latest
-    - docker tag $CI_REGISTRY_USERNAME/fluentd_prj:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/fluentd_prj:latest
-    - docker tag $CI_REGISTRY_USERNAME/rabbitmq:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/rabbitmq:latest
-    - docker tag $CI_REGISTRY_USERNAME/search_engine_ui:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/search_engine_ui:latest
-    - docker tag $CI_REGISTRY_USERNAME/search_engine_crawler:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/search_engine_crawler:latest
-    - docker push $CI_REGISTRY_USERNAME/prometheus_prj:latest
-    - docker push $CI_REGISTRY_USERNAME/grafana_prj:latest
-    - docker push $CI_REGISTRY_USERNAME/alertmanager_prj:latest
-    - docker push $CI_REGISTRY_USERNAME/fluentd_prj:latest
-    - docker push $CI_REGISTRY_USERNAME/rabbitmq:latest
-    - docker push $CI_REGISTRY_USERNAME/search_engine_ui:latest
-    - docker push $CI_REGISTRY_USERNAME/search_engine_crawler:latest
-  only:
-    - master
-    
-push tag:
+    - docker pull $CI_REGISTRY_USERNAME/search_engine_ui:$CI_COMMIT_SHA
+    - docker run $CI_REGISTRY_USERNAME/search_engine_crawler:$CI_COMMIT_SHA /bin/bash -c "cd .. && python -m unittest discover -s tests/ && coverage run -m unittest discover -s tests/ && coverage report --include crawler/crawler.py"
+    - docker run $CI_REGISTRY_USERNAME/search_engine_ui:$CI_COMMIT_SHA /bin/bash -c "cd .. && python -m unittest discover -s tests/ && coverage run -m unittest discover -s tests/ && coverage report --include ui/ui.py"
+
+.template: &push
   stage: push
   image: docker:19
   services:
@@ -189,8 +105,20 @@ push tag:
     - docker push $CI_REGISTRY_USERNAME/rabbitmq:$CI_COMMIT_REF_NAME
     - docker push $CI_REGISTRY_USERNAME/search_engine_ui:$CI_COMMIT_REF_NAME
     - docker push $CI_REGISTRY_USERNAME/search_engine_crawler:$CI_COMMIT_REF_NAME
+
+push latest:
+  <<: *push
+  only:
+    - master
+    
+push tag:
+  <<: *push
   only:
     - tags
+
+
+
+
 
 deploy dev:
   stage: staging
@@ -208,7 +136,7 @@ deploy dev:
     name: dev
     url: $URL_DEV
 
-.deploy: &deploy
+.template: &deploy
   image: google/cloud-sdk
   tags:
     - docker
