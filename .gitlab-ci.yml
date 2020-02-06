@@ -12,7 +12,7 @@ stages:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
   before_script:
-    - echo 'Building...'
+    - echo "Building..."
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_BASE64\"}}}" > /kaniko/.docker/config.json
   tags:
     - docker
@@ -70,7 +70,7 @@ unit_test_crawler:
     - pip install -r requirements.txt -r requirements-test.txt 
     - coverage run -m unittest discover -s tests/ 
     - coverage report --include crawler/crawler.py
-  coverage: '/([0-9]{1,3}%)/'
+  coverage: "/([0-9]{1,3}%)/"
 
 unit_test_ui:
   stage: testing
@@ -83,7 +83,7 @@ unit_test_ui:
     - pip install -r requirements.txt -r requirements-test.txt 
     - coverage run -m unittest discover -s tests/ 
     - coverage report --include ui/ui.py
-  coverage: '/([0-9]{1,3}%)/'
+  coverage: "/([0-9]{1,3}%)/"
 
 .template: &push
   stage: push
@@ -133,7 +133,7 @@ push tag:
   tags:
     - docker
   before_script:
-    - echo 'Deploy $CI_ENVIRONMENT_NAME env'
+    - echo "Deploy $CI_ENVIRONMENT_NAME env"
     - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
     - gcloud --quiet config set project $GOOGLE_PROJECT_ID
     - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
@@ -146,14 +146,14 @@ deploy dev:
     url: $URL_DEV
 #  <<: *deploy
   script:
-    - echo 'export CI_REGISTRY_USERNAME=$CI_REGISTRY_USERNAME' >> 1.txt
-      echo 'export RABBITMQ_VER=(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);' >> 1.txt
-      echo 'export UI_VER=(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);' >> 1.txt
-      echo 'export CRAWLER_VER=(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);' >> 1.txt
-      echo 'export PROMETHEUS_VER=(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);' >> 1.txt
-      echo 'export ALERTMANAGER_VER=(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);' >> 1.txt
-      echo 'export GRAFANA_VER=(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);' >> 1.txt
-      echo 'export FLUENTD_VER=(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);' >> 1.txt
+    - echo "export CI_REGISTRY_USERNAME=$CI_REGISTRY_USERNAME"\n >> 1.txt
+      echo "export RABBITMQ_VER="(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);\n >> 1.txt
+      echo "export UI_VER="(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);\n >> 1.txt
+      echo "export CRAWLER_VER="(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);\n >> 1.txt
+      echo "export PROMETHEUS_VER="(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);\n >> 1.txt
+      echo "export ALERTMANAGER_VER="(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);\n >> 1.txt
+      echo "export GRAFANA_VER="(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);\n >> 1.txt
+      echo "export FLUENTD_VER="(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);\n >> 1.txt
     - cat 1.txt
 #    - gcloud compute ssh docker-host-dev --command="mkdir -p /root/docker && cd ~/docker && mv -f .env.example .env"
 #    - gcloud compute ssh docker-host-dev --command="cd ~/docker && docker-compose -f docker-compose-logging.yml down"
