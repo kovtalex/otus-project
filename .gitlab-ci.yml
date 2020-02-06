@@ -147,21 +147,23 @@ deploy dev:
 #  <<: *deploy
   script:
     - echo "export CI_REGISTRY_USERNAME=$CI_REGISTRY_USERNAME" >> 1.txt
-    - echo "export RABBITMQ_VER=(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo \"latest\"; else $CI_COMMIT_SHA; fi)" >> 1.txt
-    - echo "export UI_VER=(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo \"latest\"; else $CI_COMMIT_SHA; fi)" >> 1.txt
-    - echo "export CRAWLER_VER=(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo \"latest\"; else $CI_COMMIT_SHA; fi)" >> 1.txt
-    - echo "export PROMETHEUS_VER=(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo \"latest\"; else $CI_COMMIT_SHA; fi)" >> 1.txt
-    - echo "export ALERTMANAGER_VER=(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo \"latest\"; else $CI_COMMIT_SHA; fi)" >> 1.txt
-    - echo "export GRAFANA_VER=(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo \"latest\"; else $CI_COMMIT_SHA; fi)" >> 1.txt
-    - echo "export FLUENTD_VER=(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo \"latest\"; else $CI_COMMIT_SHA; fi)" >> 1.txt
-    - cat 1.txt
+    - echo "export RABBITMQ_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo \"latest\"; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag
+    - echo "export UI_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo \"latest\"; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag
+    - echo "export CRAWLER_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo \"latest\"; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag
+    - echo "export PROMETHEUS_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo \"latest\"; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag
+    - echo "export ALERTMANAGER_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo \"latest\"; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag
+    - echo "export GRAFANA_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo \"latest\"; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag
+    - echo "export FLUENTD_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo \"latest\"; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag
+    - cat $CI_PROJECT_DIR/docker/tag
 #    - gcloud compute ssh docker-host-dev --command="mkdir -p /root/docker && cd ~/docker && mv -f .env.example .env"
-#    - gcloud compute ssh docker-host-dev --command="cd ~/docker && docker-compose -f docker-compose-logging.yml down"
-#    - gcloud compute ssh docker-host-dev --command="cd ~/docker && docker-compose -f docker-compose-monitoring.yml down"
-#    - gcloud compute ssh docker-host-dev --command="cd ~/docker && docker-compose -f docker-compose.yml"
-#    - gcloud compute ssh docker-host-dev --command="cd ~/docker && docker-compose -f docker-compose-logging.yml up -d"
-#    - gcloud compute ssh docker-host-dev --command="cd ~/docker && docker-compose -f docker-compose-monitoring.yml up -d"
-#    - gcloud compute ssh docker-host-dev --command="cd ~/docker && docker-compose -f docker-compose.yml up -d"
+#    - gcloud compute ssh docker-host-dev --command="cd ~/docker && source tag && docker-compose -f docker-compose-logging.yml down"
+#    - gcloud compute ssh docker-host-dev --command="cd ~/docker && source tag && docker-compose -f docker-compose-monitoring.yml down"
+#    - gcloud compute ssh docker-host-dev --command="cd ~/docker && source tag && docker-compose -f docker-compose.yml"
+#    - gcloud compute ssh docker-host-dev --command="cd ~/docker && source tag && docker-compose -f docker-compose-logging.yml up -d"
+#    - gcloud compute ssh docker-host-dev --command="cd ~/docker && source tag && docker-compose -f docker-compose-monitoring.yml up -d"
+#    - gcloud compute ssh docker-host-dev --command="cd ~/docker && source tag && docker-compose -f docker-compose.yml up -d"
+#    - gcloud compute ssh docker-host-dev --command="cd ~/docker && echo $FLUENTD_VER"
+
 
 deploy preprod:
   stage: preprod
