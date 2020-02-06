@@ -1,5 +1,7 @@
 # Курсовой проект
 
+[![coverage report](https://gitlab.com/kovtalex/otus-project/badges/master/coverage.svg?job=unit_test_crawler)](https://gitlab.com/kovtalex/otus-project/commits/master)[![coverage report](https://gitlab.com/kovtalex/otus-project/badges/master/coverage.svg?job=unit_test_ui)](https://gitlab.com/kovtalex/otus-project/commits/master)
+
 ## Состав приложения
 
 - [search_engine_crawler](https://github.com/express42/search_engine_crawler) - поисковый бот для сбора текстовой информации с веб-страниц и ссылок.
