@@ -146,14 +146,14 @@ deploy dev:
     url: $URL_DEV
 #  <<: *deploy
   script:
-    - echo "export CI_REGISTRY_USERNAME=$CI_REGISTRY_USERNAME"\n >> 1.txt
-      echo "export RABBITMQ_VER="(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);\n >> 1.txt
-      echo "export UI_VER="(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);\n >> 1.txt
-      echo "export CRAWLER_VER="(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);\n >> 1.txt
-      echo "export PROMETHEUS_VER="(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);\n >> 1.txt
-      echo "export ALERTMANAGER_VER="(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);\n >> 1.txt
-      echo "export GRAFANA_VER="(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);\n >> 1.txt
-      echo "export FLUENTD_VER="(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);\n >> 1.txt
+    - echo "export CI_REGISTRY_USERNAME=$CI_REGISTRY_USERNAME" >> 1.txt
+    - echo "export RABBITMQ_VER="(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi); >> 1.txt
+    - echo "export UI_VER="(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi); >> 1.txt
+    - echo "export CRAWLER_VER="(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi); >> 1.txt
+    - echo "export PROMETHEUS_VER="(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi); >> 1.txt
+    - echo "export ALERTMANAGER_VER="(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi); >> 1.txt
+    - echo "export GRAFANA_VER="(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi); >> 1.txt
+    - echo "export FLUENTD_VER="(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi); >> 1.txt
     - cat 1.txt
 #    - gcloud compute ssh docker-host-dev --command="mkdir -p /root/docker && cd ~/docker && mv -f .env.example .env"
 #    - gcloud compute ssh docker-host-dev --command="cd ~/docker && docker-compose -f docker-compose-logging.yml down"
