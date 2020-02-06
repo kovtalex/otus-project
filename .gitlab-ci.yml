@@ -156,12 +156,8 @@ deploy dev:
   <<: *deploy
   script:
     - gcloud compute ssh docker-host-dev --command="mkdir -p /root/docker && cd ~/docker && mv -f .env.example .env"
-    - gcloud compute ssh docker-host-dev --command="cd ~/docker && source tag && docker-compose -f docker-compose-logging.yml down"
-    - gcloud compute ssh docker-host-dev --command="cd ~/docker && source tag && docker-compose -f docker-compose-monitoring.yml down"
-    - gcloud compute ssh docker-host-dev --command="cd ~/docker && source tag && docker-compose -f docker-compose.yml"
-    - gcloud compute ssh docker-host-dev --command="cd ~/docker && source tag && docker-compose -f docker-compose-logging.yml up -d"
-    - gcloud compute ssh docker-host-dev --command="cd ~/docker && source tag && docker-compose -f docker-compose-monitoring.yml up -d"
-    - gcloud compute ssh docker-host-dev --command="cd ~/docker && source tag && docker-compose -f docker-compose.yml up -d"
+    - gcloud compute ssh docker-host-dev --command="cd ~/docker && source tag && docker-compose -f docker-compose-logging.yml -f docker-compose-monitoring.yml -f docker-compose.yml down"
+    - gcloud compute ssh docker-host-dev --command="cd ~/docker && source tag && docker-compose -f docker-compose-logging.yml -f docker-compose-monitoring.yml -f docker-compose.yml up -d"
     - gcloud compute ssh docker-host-dev --command="cd ~/docker && echo $FLUENTD_VER"
 
 
