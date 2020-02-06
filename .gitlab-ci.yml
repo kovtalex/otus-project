@@ -103,20 +103,20 @@ unit_test_ui:
     - docker pull $CI_REGISTRY_USERNAME/rabbitmq:$CI_COMMIT_SHA
     - docker pull $CI_REGISTRY_USERNAME/search_engine_ui:$CI_COMMIT_SHA
     - docker pull $CI_REGISTRY_USERNAME/search_engine_crawler:$CI_COMMIT_SHA
-    - docker tag $CI_REGISTRY_USERNAME/prometheus_prj:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/prometheus_prj:$CI_COMMIT_REF_NAME
-    - docker tag $CI_REGISTRY_USERNAME/grafana_prj:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/grafana_prj:$CI_COMMIT_REF_NAME
-    - docker tag $CI_REGISTRY_USERNAME/alertmanager_prj:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/alertmanager_prj:$CI_COMMIT_REF_NAME
-    - docker tag $CI_REGISTRY_USERNAME/fluentd_prj:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/fluentd_prj:$CI_COMMIT_REF_NAME
-    - docker tag $CI_REGISTRY_USERNAME/rabbitmq:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/rabbitmq:$CI_COMMIT_REF_NAME
-    - docker tag $CI_REGISTRY_USERNAME/search_engine_ui:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/search_engine_ui:$CI_COMMIT_REF_NAME
-    - docker tag $CI_REGISTRY_USERNAME/search_engine_crawler:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/search_engine_crawler:$CI_COMMIT_REF_NAME
-    - docker push $CI_REGISTRY_USERNAME/prometheus_prj:$CI_COMMIT_REF_NAME
-    - docker push $CI_REGISTRY_USERNAME/grafana_prj:$CI_COMMIT_REF_NAME
-    - docker push $CI_REGISTRY_USERNAME/alertmanager_prj:$CI_COMMIT_REF_NAME
-    - docker push $CI_REGISTRY_USERNAME/fluentd_prj:$CI_COMMIT_REF_NAME
-    - docker push $CI_REGISTRY_USERNAME/rabbitmq:$CI_COMMIT_REF_NAME
-    - docker push $CI_REGISTRY_USERNAME/search_engine_ui:$CI_COMMIT_REF_NAME
-    - docker push $CI_REGISTRY_USERNAME/search_engine_crawler:$CI_COMMIT_REF_NAME
+    - docker tag $CI_REGISTRY_USERNAME/prometheus_prj:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/prometheus_prj:(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_REF_NAME; fi);
+    - docker tag $CI_REGISTRY_USERNAME/grafana_prj:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/grafana_prj:(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_REF_NAME; fi);
+    - docker tag $CI_REGISTRY_USERNAME/alertmanager_prj:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/alertmanager_prj:(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_REF_NAME; fi);
+    - docker tag $CI_REGISTRY_USERNAME/fluentd_prj:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/fluentd_prj:(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_REF_NAME; fi);
+    - docker tag $CI_REGISTRY_USERNAME/rabbitmq:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/rabbitmq:(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_REF_NAME; fi);
+    - docker tag $CI_REGISTRY_USERNAME/search_engine_ui:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/search_engine_ui:(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_REF_NAME; fi);
+    - docker tag $CI_REGISTRY_USERNAME/search_engine_crawler:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/search_engine_crawler:(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_REF_NAME; fi);
+    - docker push $CI_REGISTRY_USERNAME/prometheus_prj:(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_REF_NAME; fi);
+    - docker push $CI_REGISTRY_USERNAME/grafana_prj:(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_REF_NAME; fi);
+    - docker push $CI_REGISTRY_USERNAME/alertmanager_prj:(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_REF_NAME; fi);
+    - docker push $CI_REGISTRY_USERNAME/fluentd_prj:(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_REF_NAME; fi);
+    - docker push $CI_REGISTRY_USERNAME/rabbitmq:(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_REF_NAME; fi);
+    - docker push $CI_REGISTRY_USERNAME/search_engine_ui:(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_REF_NAME; fi);
+    - docker push $CI_REGISTRY_USERNAME/search_engine_crawler:(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_REF_NAME; fi);
 
 push latest:
   <<: *push
@@ -128,40 +128,41 @@ push tag:
   only:
     - tags
 
-
-
-
-
-deploy dev:
-  stage: staging
-  image: google/cloud-sdk
-  tags:
-    - docker
-  script:
-    - echo 'Deploy Dev env'
-    - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
-    - gcloud --quiet config set project $GOOGLE_PROJECT_ID
-    - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
-    - gcloud compute scp --recurse docker docker-host-dev:~
-    - gcloud compute ssh docker-host-dev --command="export CI_REGISTRY_USERNAME=$CI_REGISTRY_USERNAME && mkdir -p /root/docker && export RABBITMQ_VER=$CI_COMMIT_SHA && export UI_VER=$CI_COMMIT_SHA && export CRAWLER_VER=$CI_COMMIT_SHA && export PROMETHEUS_VER=$CI_COMMIT_SHA && export ALERTMANAGER_VER=$CI_COMMIT_SHA && export GRAFANA_VER=$CI_COMMIT_SHA && export FLUENTD_VER=$CI_COMMIT_SHA && cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml -f docker-compose-monitoring.yml -f docker-compose-logging.yml down && docker-compose -f docker-compose.yml -f docker-compose-monitoring.yml -f docker-compose-logging.yml up -d"
-  environment:
-    name: dev
-    url: $URL_DEV
-
 .template: &deploy
   image: google/cloud-sdk
   tags:
     - docker
-  script:
+  before_script:
     - echo 'Deploy $CI_ENVIRONMENT_NAME env'
     - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
     - gcloud --quiet config set project $GOOGLE_PROJECT_ID
     - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
     - gcloud compute scp --recurse docker docker-host-$CI_ENVIRONMENT_NAME:~
-    - gcloud compute ssh docker-host-$CI_ENVIRONMENT_NAME --command="export CI_REGISTRY_USERNAME=$CI_REGISTRY_USERNAME && mkdir -p /root/docker && cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml -f docker-compose-monitoring.yml -f docker-compose-logging.yml down && docker-compose -f docker-compose.yml -f docker-compose-monitoring.yml -f docker-compose-logging.yml up -d"
-  when: manual
-  only:
-    - master
+
+deploy dev:
+  stage: staging
+  environment:
+    name: dev
+    url: $URL_DEV
+#  <<: *deploy
+  script:
+    - |
+      echo 'export CI_REGISTRY_USERNAME=$CI_REGISTRY_USERNAME
+      export RABBITMQ_VER=(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);
+      export UI_VER=(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);
+      export CRAWLER_VER=(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);
+      export PROMETHEUS_VER=(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);
+      export ALERTMANAGER_VER=(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);
+      export GRAFANA_VER=(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);
+      export FLUENTD_VER=(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then latest; else $CI_COMMIT_SHA; fi);' > 1.txt
+    - cat 1.txt
+#    - gcloud compute ssh docker-host-dev --command="mkdir -p /root/docker && cd ~/docker && mv -f .env.example .env"
+#    - gcloud compute ssh docker-host-dev --command="cd ~/docker && docker-compose -f docker-compose-logging.yml down"
+#    - gcloud compute ssh docker-host-dev --command="cd ~/docker && docker-compose -f docker-compose-monitoring.yml down"
+#    - gcloud compute ssh docker-host-dev --command="cd ~/docker && docker-compose -f docker-compose.yml"
+#    - gcloud compute ssh docker-host-dev --command="cd ~/docker && docker-compose -f docker-compose-logging.yml up -d"
+#    - gcloud compute ssh docker-host-dev --command="cd ~/docker && docker-compose -f docker-compose-monitoring.yml up -d"
+#    - gcloud compute ssh docker-host-dev --command="cd ~/docker && docker-compose -f docker-compose.yml up -d"
 
 deploy preprod:
   stage: preprod
@@ -169,6 +170,11 @@ deploy preprod:
     name: preprod
     url: $URL_PREPROD
   <<: *deploy
+  script:
+    - gcloud compute ssh docker-host-$CI_ENVIRONMENT_NAME --command="export CI_REGISTRY_USERNAME=$CI_REGISTRY_USERNAME && mkdir -p /root/docker && cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml -f docker-compose-monitoring.yml -f docker-compose-logging.yml down && docker-compose -f docker-compose.yml -f docker-compose-monitoring.yml -f docker-compose-logging.yml up -d"
+  only:
+    - master
+  when: manual  
 
 deploy production:
   stage: production
@@ -176,3 +182,8 @@ deploy production:
     name: prod
     url: $URL_PROD
   <<: *deploy
+  script:
+    - gcloud compute ssh docker-host-$CI_ENVIRONMENT_NAME --command="export CI_REGISTRY_USERNAME=$CI_REGISTRY_USERNAME && mkdir -p /root/docker && cd ~/docker && mv -f .env.example .env && docker-compose -f docker-compose.yml -f docker-compose-monitoring.yml -f docker-compose-logging.yml down && docker-compose -f docker-compose.yml -f docker-compose-monitoring.yml -f docker-compose-logging.yml up -d"
+  only:
+    - master
+  when: manual

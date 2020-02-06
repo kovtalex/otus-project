@@ -1,6 +1,6 @@
 # Курсовой проект
 
-[![coverage report](https://gitlab.com/kovtalex/otus-project/badges/master/coverage.svg?job=unit_test_crawler)](https://gitlab.com/kovtalex/otus-project/commits/master)[![coverage report](https://gitlab.com/kovtalex/otus-project/badges/master/coverage.svg?job=unit_test_ui)](https://gitlab.com/kovtalex/otus-project/commits/master)
+[![coverage report](https://gitlab.com/kovtalex/otus-project/badges/master/coverage.svg?job=unit_test_crawler)](https://gitlab.com/kovtalex/otus-project/tree/master/src/search_engine_crawler) [![coverage report](https://gitlab.com/kovtalex/otus-project/badges/master/coverage.svg?job=unit_test_ui)](https://gitlab.com/kovtalex/otus-project/tree/master/src/search_engine_ui)
 
 ## Состав приложения
 
