@@ -50,8 +50,8 @@ services:
       - RMQ_USERNAME=guest
       - RMQ_PASSWORD=guest
       - CHECK_INTERVAL=60
-      - URL=${URL}
       - EXCLUDE_URLS=${EXCLUDE_URLS}
+    command: python -u crawler.py $URL
     depends_on:
       - mongo
       - rabbitmq
