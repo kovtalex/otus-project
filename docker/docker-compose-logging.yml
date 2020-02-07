@@ -3,7 +3,6 @@ services:
   fluentd:
     image: ${CI_REGISTRY_USERNAME}/fluentd_prj:${FLUENTD_VER}
     restart: on-failure
-    container_name: fluentd
     ports:
       - "24224:24224"
       - "24224:24224/udp"
@@ -13,7 +12,6 @@ services:
   elasticsearch:
     image: elasticsearch:${ELASTICSEARCH_VER}
     restart: on-failure
-    container_name: elasticsearch
     environment:
       - xpack.security.enabled=false
       - discovery.type=single-node
@@ -25,7 +23,6 @@ services:
   kibana:
     image: kibana:${KIBANA_VER}
     restart: on-failure
-    container_name: kibana
     ports:
       - "5601:5601"
     networks:
