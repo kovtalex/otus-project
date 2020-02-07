@@ -3,6 +3,7 @@ services:
   prometheus:
     image: ${CI_REGISTRY_USERNAME}/prometheus_prj:${PROMETHEUS_VER}
     restart: on-failure
+    container_name: prometheus
     ports:
       - '9090:9090'
     volumes:
@@ -17,6 +18,7 @@ services:
   grafana:
     image: ${CI_REGISTRY_USERNAME}/grafana_prj:${GRAFANA_VER}
     restart: on-failure
+    container_name: grafana
     volumes:
       - grafana_data:/var/lib/grafana
     environment:
@@ -32,6 +34,7 @@ services:
   alertmanager:
     image: ${CI_REGISTRY_USERNAME}/alertmanager_prj:${ALERTMANAGER_VER}
     restart: on-failure
+    container_name: alertmanager
     command:
       - '--config.file=/etc/alertmanager/config.yml'
     ports:
@@ -42,6 +45,7 @@ services:
   mongodb-exporter:
     image: ${CI_REGISTRY_USERNAME}/mongodb_exporter:${MONGODB_EXPORTER_VER}
     restart: on-failure
+    container_name: mongodb_exporter
     command:
       '--mongodb.uri=mongodb://mongo:27017'
     networks:
@@ -50,6 +54,7 @@ services:
   node-exporter:
     image: prom/node-exporter:${NODE_EXPORTER_VER}
     restart: on-failure
+    container_name: node-exporter
     user: root
     volumes:
       - /proc:/host/proc:ro
@@ -64,6 +69,8 @@ services:
 
   cadvisor:
     image: google/cadvisor:${CADVISOR_VER}
+    restart: on-failure
+    container_name: cadvisor
     volumes:
       - '/:/rootfs:ro'
       - '/var/run:/var/run:rw'
