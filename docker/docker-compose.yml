@@ -41,7 +41,7 @@ services:
   crawler:
     image: ${CI_REGISTRY_USERNAME}/search_engine_crawler:${CRAWLER_VER}
     restart: on-failure
-    container_name: ui
+    container_name: crawler
     environment:
       - MONGO=mongo
       - MONGO_PORT=27017
