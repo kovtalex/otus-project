@@ -103,20 +103,20 @@ unit_test_ui:
     - docker pull $CI_REGISTRY_USERNAME/rabbitmq:$CI_COMMIT_SHA
     - docker pull $CI_REGISTRY_USERNAME/search_engine_ui:$CI_COMMIT_SHA
     - docker pull $CI_REGISTRY_USERNAME/search_engine_crawler:$CI_COMMIT_SHA
-    - docker tag $CI_REGISTRY_USERNAME/prometheus_prj:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/prometheus_prj:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo "latest"; else echo $CI_COMMIT_REF_NAME; fi)
-    - docker tag $CI_REGISTRY_USERNAME/grafana_prj:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/grafana_prj:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo "latest"; else echo $CI_COMMIT_REF_NAME; fi)
-    - docker tag $CI_REGISTRY_USERNAME/alertmanager_prj:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/alertmanager_prj:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo "latest"; else echo $CI_COMMIT_REF_NAME; fi)
-    - docker tag $CI_REGISTRY_USERNAME/fluentd_prj:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/fluentd_prj:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo "latest"; else echo $CI_COMMIT_REF_NAME; fi)
-    - docker tag $CI_REGISTRY_USERNAME/rabbitmq:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/rabbitmq:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo "latest"; else echo $CI_COMMIT_REF_NAME; fi)
-    - docker tag $CI_REGISTRY_USERNAME/search_engine_ui:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/search_engine_ui:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo "latest"; else echo $CI_COMMIT_REF_NAME; fi)
-    - docker tag $CI_REGISTRY_USERNAME/search_engine_crawler:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/search_engine_crawler:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo "latest"; else echo $CI_COMMIT_REF_NAME; fi)
-    - docker push $CI_REGISTRY_USERNAME/prometheus_prj:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo "latest"; else echo $CI_COMMIT_REF_NAME; fi)
-    - docker push $CI_REGISTRY_USERNAME/grafana_prj:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo "latest"; else echo $CI_COMMIT_REF_NAME; fi)
-    - docker push $CI_REGISTRY_USERNAME/alertmanager_prj:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo "latest"; else echo $CI_COMMIT_REF_NAME; fi)
-    - docker push $CI_REGISTRY_USERNAME/fluentd_prj:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo "latest"; else echo $CI_COMMIT_REF_NAME; fi)
-    - docker push $CI_REGISTRY_USERNAME/rabbitmq:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo "latest"; else echo $CI_COMMIT_REF_NAME; fi)
-    - docker push $CI_REGISTRY_USERNAME/search_engine_ui:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo "latest"; else echo $CI_COMMIT_REF_NAME; fi)
-    - docker push $CI_REGISTRY_USERNAME/search_engine_crawler:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo "latest"; else echo $CI_COMMIT_REF_NAME; fi)
+    - docker tag $CI_REGISTRY_USERNAME/prometheus_prj:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/prometheus_prj:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo latest; else echo $CI_COMMIT_REF_NAME; fi)
+    - docker tag $CI_REGISTRY_USERNAME/grafana_prj:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/grafana_prj:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo latest; else echo $CI_COMMIT_REF_NAME; fi)
+    - docker tag $CI_REGISTRY_USERNAME/alertmanager_prj:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/alertmanager_prj:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo latest; else echo $CI_COMMIT_REF_NAME; fi)
+    - docker tag $CI_REGISTRY_USERNAME/fluentd_prj:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/fluentd_prj:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo latest; else echo $CI_COMMIT_REF_NAME; fi)
+    - docker tag $CI_REGISTRY_USERNAME/rabbitmq:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/rabbitmq:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo latest; else echo $CI_COMMIT_REF_NAME; fi)
+    - docker tag $CI_REGISTRY_USERNAME/search_engine_ui:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/search_engine_ui:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo latest; else echo $CI_COMMIT_REF_NAME; fi)
+    - docker tag $CI_REGISTRY_USERNAME/search_engine_crawler:$CI_COMMIT_SHA $CI_REGISTRY_USERNAME/search_engine_crawler:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo latest; else echo $CI_COMMIT_REF_NAME; fi)
+    - docker push $CI_REGISTRY_USERNAME/prometheus_prj:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo latest; else echo $CI_COMMIT_REF_NAME; fi)
+    - docker push $CI_REGISTRY_USERNAME/grafana_prj:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo latest; else echo $CI_COMMIT_REF_NAME; fi)
+    - docker push $CI_REGISTRY_USERNAME/alertmanager_prj:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo latest; else echo $CI_COMMIT_REF_NAME; fi)
+    - docker push $CI_REGISTRY_USERNAME/fluentd_prj:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo latest; else echo $CI_COMMIT_REF_NAME; fi)
+    - docker push $CI_REGISTRY_USERNAME/rabbitmq:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo latest; else echo $CI_COMMIT_REF_NAME; fi)
+    - docker push $CI_REGISTRY_USERNAME/search_engine_ui:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo latest; else echo $CI_COMMIT_REF_NAME; fi)
+    - docker push $CI_REGISTRY_USERNAME/search_engine_crawler:$(if [ "$CI_COMMIT_REF_NAME" == "master" ]; then echo latest; else echo $CI_COMMIT_REF_NAME; fi)
 
 push latest:
   <<: *push
@@ -134,13 +134,13 @@ push tag:
     - docker
   before_script:
     - echo "export CI_REGISTRY_USERNAME=$CI_REGISTRY_USERNAME" >> $CI_PROJECT_DIR/docker/tag
-    - echo "export RABBITMQ_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo \"latest\"; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag
-    - echo "export UI_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo \"latest\"; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag
-    - echo "export CRAWLER_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo \"latest\"; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag
-    - echo "export PROMETHEUS_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo \"latest\"; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag
-    - echo "export ALERTMANAGER_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo \"latest\"; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag
-    - echo "export GRAFANA_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo \"latest\"; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag
-    - echo "export FLUENTD_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo \"latest\"; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag
+    - echo "export RABBITMQ_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo latest; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag
+    - echo "export UI_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo latest; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag
+    - echo "export CRAWLER_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo latest; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag
+    - echo "export PROMETHEUS_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo latest; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag
+    - echo "export ALERTMANAGER_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo latest; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag
+    - echo "export GRAFANA_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo latest; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag
+    - echo "export FLUENTD_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo latest; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag
     - cat $CI_PROJECT_DIR/docker/tag
   script:
     - echo "Deploy $CI_ENVIRONMENT_NAME env"
@@ -148,9 +148,9 @@ push tag:
     - gcloud --quiet config set project $GOOGLE_PROJECT_ID
     - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
     - gcloud compute scp --recurse docker docker-host-$CI_ENVIRONMENT_NAME:~
-    - gcloud compute ssh docker-host-dev --command="mkdir -p /root/docker && cd ~/docker && mv -f .env.example .env"
-    - gcloud compute ssh docker-host-dev --command="cd ~/docker && source tag && docker-compose -f docker-compose-logging.yml -f docker-compose-monitoring.yml -f docker-compose.yml down"
-    - gcloud compute ssh docker-host-dev --command="cd ~/docker && source tag && docker-compose -f docker-compose-logging.yml -f docker-compose-monitoring.yml -f docker-compose.yml up -d"
+    - gcloud compute ssh docker-host-$CI_ENVIRONMENT_NAME --command="mkdir -p /root/docker && cd ~/docker && mv -f .env.example .env"
+    - gcloud compute ssh docker-host-$CI_ENVIRONMENT_NAME --command="cd ~/docker && source tag && docker-compose -f docker-compose-logging.yml -f docker-compose-monitoring.yml -f docker-compose.yml down"
+    - gcloud compute ssh docker-host-$CI_ENVIRONMENT_NAME --command="cd ~/docker && source tag && docker-compose -f docker-compose-logging.yml -f docker-compose-monitoring.yml -f docker-compose.yml up -d"
 
 
 deploy dev:
