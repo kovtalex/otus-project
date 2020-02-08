@@ -151,7 +151,7 @@ push tag:
     - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
     - gcloud compute scp --recurse docker docker-host-$CI_ENVIRONMENT_NAME:~
     - gcloud compute ssh docker-host-$CI_ENVIRONMENT_NAME --command="mkdir -p /root/docker && cd ~/docker && mv -f .env.example .env"
-    - gcloud compute ssh docker-host-$CI_ENVIRONMENT_NAME --command="cd ~/docker && source tag && docker-compose -f docker-compose-logging.yml -f docker-compose-monitoring.yml -f docker-compose.yml up -d"
+    - gcloud compute ssh docker-host-$CI_ENVIRONMENT_NAME --command="cd ~/docker && source tag && docker-compose -f docker-compose-logging.yml -f docker-compose-monitoring.yml -f docker-compose-services.yml -f docker-compose.yml up -d"
     - gcloud compute ssh docker-host-$CI_ENVIRONMENT_NAME --command="docker system prune --volumes -f"
 
 

@@ -1,0 +1,32 @@
+version: '3.7'
+services:
+  mongo:
+    image: mongo:${MONGO_VER}
+    container_name: mongo
+    hostname: mongo
+    restart: on-failure
+    volumes:
+      - mongo_db:/data/db
+    ports:
+      - '27017:27017'
+    networks:
+      back_net:
+
+  rabbitmq:
+    image: ${CI_REGISTRY_USERNAME}/rabbitmq:${RABBITMQ_VER}
+    container_name: rabbit
+    hostname: rabbit
+    restart: on-failure
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq:rw
+    ports:
+      - '15672:15672'
+    networks:
+      back_net:
+ 
+volumes:
+  mongo_db:
+  rabbitmq_data:
+
+networks:
+  back_net:
