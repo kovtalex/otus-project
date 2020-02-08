@@ -1,5 +1,27 @@
 version: '3.7'
 services:
+  mongo:
+    image: mongo:${MONGO_VER}
+    container_name: mongo
+    hostname: mongo
+    restart: on-failure
+    volumes:
+      - mongo_db:/data/db
+    ports:
+      - '27017:27017'
+    networks:
+      back_net:
+
+  rabbitmq:
+    image: ${CI_REGISTRY_USERNAME}/rabbitmq:${RABBITMQ_VER}
+    container_name: rabbit
+    hostname: rabbit
+    restart: on-failure
+    ports:
+      - '15672:15672'
+    networks:
+      back_net:
+
   ui:
     image: ${CI_REGISTRY_USERNAME}/search_engine_ui:${UI_VER}
     container_name: ui
@@ -46,8 +68,34 @@ services:
     networks:
       back_net:
 
+  crawler2:
+    image: ${CI_REGISTRY_USERNAME}/search_engine_crawler:${CRAWLER_VER}
+    container_name: crawler2
+    hostname: crawler2
+    restart: on-failure
+    environment:
+      - MONGO=mongo
+      - MONGO_PORT=27017
+      - RMQ_HOST=rabbitmq
+      - RMQ_QUEUE=urls
+      - RMQ_USERNAME=guest
+      - RMQ_PASSWORD=guest
+      - CHECK_INTERVAL=60
+      - EXCLUDE_URLS=${EXCLUDE_URLS2}
+      - URL=${URL2}
+    depends_on:
+      - mongo
+      - rabbitmq
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: service.crawler2
+    networks:
+      back_net:        
+
 volumes:
-  mongo_db:
+  mongo_db:  
 
 networks:
   back_net:
