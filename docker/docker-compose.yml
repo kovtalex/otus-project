@@ -53,7 +53,7 @@ services:
       - RMQ_USERNAME=guest
       - RMQ_PASSWORD=guest
       - CHECK_INTERVAL=60
-      - EXCLUDE_URLS=${EXCLUDE_URLS1}
+      - EXCLUDE_URLS=${EXCLUDE_URLS}
       - URL
     depends_on:
       - mongo
