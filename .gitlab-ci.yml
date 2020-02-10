@@ -133,8 +133,8 @@ push tag:
   tags:
     - docker
   before_script:
-    - echo "export URL1=$URL1" >> $CI_PROJECT_DIR/docker/tag
-    - echo "export EXCLUDE_URLS1=$EXCLUDE_URLS1" >> $CI_PROJECT_DIR/docker/tag    
+    - echo "export URL=$URL" >> $CI_PROJECT_DIR/docker/tag
+    - echo "export EXCLUDE_URLS=$EXCLUDE_URLS" >> $CI_PROJECT_DIR/docker/tag    
     - echo "export CI_REGISTRY_USERNAME=$CI_REGISTRY_USERNAME" >> $CI_PROJECT_DIR/docker/tag
     - echo "export RABBITMQ_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo latest; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag
     - echo "export UI_VER=$(if [ \"$CI_COMMIT_REF_NAME\" == \"master\" ]; then echo latest; else echo $CI_COMMIT_SHA; fi)" >> $CI_PROJECT_DIR/docker/tag

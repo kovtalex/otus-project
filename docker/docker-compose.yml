@@ -54,7 +54,7 @@ services:
       - RMQ_PASSWORD=guest
       - CHECK_INTERVAL=60
       - EXCLUDE_URLS=${EXCLUDE_URLS1}
-      - URL=${URL1}
+      - URL
     depends_on:
       - mongo
       - rabbitmq
