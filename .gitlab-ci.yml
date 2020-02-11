@@ -166,7 +166,7 @@ push tag:
     - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
     - gcloud --quiet config set project $GOOGLE_PROJECT_ID
     - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
-    - gcloud compute ssh docker-host-$CI_ENVIRONMENT_NAME --command="cd ~/docker && docker-compose -f docker-compose-logging.yml -f docker-compose-monitoring.yml -f docker-compose.yml up -d"
+    - gcloud compute ssh docker-host-$CI_ENVIRONMENT_NAME --command="cd ~/docker && docker-compose -f docker-compose-logging.yml -f docker-compose-monitoring.yml -f docker-compose.yml down"
     - gcloud compute ssh docker-host-$CI_ENVIRONMENT_NAME --command="docker system prune --volumes -f"
     
 deploy dev:
