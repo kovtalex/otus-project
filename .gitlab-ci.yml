@@ -154,11 +154,27 @@ push tag:
     - gcloud compute ssh docker-host-$CI_ENVIRONMENT_NAME --command="cd ~/docker && source tag && docker-compose -f docker-compose-logging.yml -f docker-compose-monitoring.yml -f docker-compose.yml up -d"
     - gcloud compute ssh docker-host-$CI_ENVIRONMENT_NAME --command="docker system prune --volumes -f"
 
+
+.template: &stop
+  image: google/cloud-sdk
+  variables:
+    GIT_STRATEGY: none
+  tags:
+    - docker
+  script:
+    - echo "Stop $CI_ENVIRONMENT_NAME env"
+    - echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+    - gcloud --quiet config set project $GOOGLE_PROJECT_ID
+    - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
+    - gcloud compute ssh docker-host-$CI_ENVIRONMENT_NAME --command="cd ~/docker && docker-compose -f docker-compose-logging.yml -f docker-compose-monitoring.yml -f docker-compose.yml down"
+    - gcloud compute ssh docker-host-$CI_ENVIRONMENT_NAME --command="docker system prune --volumes -f"
+    
 deploy dev:
   stage: staging
   environment:
     name: dev
     url: $URL_DEV
+    on_stop: stop_dev
   <<: *deploy
 
 deploy preprod:
@@ -166,17 +182,47 @@ deploy preprod:
   environment:
     name: preprod
     url: $URL_PREPROD
+    on_stop: stop_preprod 
   <<: *deploy
   only:
     - master
-  when: manual  
+  when: manual
 
 deploy production:
   stage: production
   environment:
     name: prod
     url: $URL_PROD
+    on_stop: stop_production
   <<: *deploy
+  only:
+    - master
+  when: manual
+
+stop_dev:
+  stage: staging
+  environment:
+    name: dev
+    action: stop
+  <<: *stop
+  when: manual
+
+stop_preprod:
+  stage: preprod
+  environment:
+    name: preprod
+    action: stop
+  <<: *stop
+  only:
+    - master
+  when: manual
+
+stop_production:
+  stage: production
+  environment:
+    name: prod
+    action: stop
+  <<: *stop
   only:
     - master
   when: manual
