@@ -1,8 +1,9 @@
-from flask import Flask, request, g, render_template, logging, Response
+from flask import Flask, request, g, render_template, Response
 from functools import reduce
 from os import getenv
 import uuid
 import time
+import logging
 import structlog
 from pymongo import MongoClient
 import traceback
