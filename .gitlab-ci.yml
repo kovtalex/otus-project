@@ -213,6 +213,8 @@ stop_preprod:
     name: preprod
     action: stop
   <<: *stop
+  only:
+    - master
   when: manual
 
 stop_production:
@@ -221,4 +223,6 @@ stop_production:
     name: prod
     action: stop
   <<: *stop
+  only:
+    - master
   when: manual
