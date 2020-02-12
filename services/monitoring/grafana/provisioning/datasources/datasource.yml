@@ -19,37 +19,8 @@ datasources:
   orgId: 1
   # <string> url
   url: http://prometheus:9090
-  # <string> Deprecated, use secureJsonData.password
-  password:
-  # <string> database user, if used
-  user:
-  # <string> database name, if used
-  database:
-  # <bool> enable/disable basic auth
-  basicAuth:
-  # <string> basic auth username
-  basicAuthUser:
-  # <string> Deprecated, use secureJsonData.basicAuthPassword
-  basicAuthPassword:
-  # <bool> enable/disable with credentials headers
-  withCredentials:
   # <bool> mark as default datasource. Max one per org
-  isDefault:
-  # <map> fields that will be converted to json and stored in jsonData
-  jsonData:
-     graphiteVersion: "1.1"
-     tlsAuth: true
-     tlsAuthWithCACert: true
-  # <string> json object of data that will be encrypted.
-  secureJsonData:
-    tlsCACert: "..."
-    tlsClientCert: "..."
-    tlsClientKey: "..."
-    # <string> database password, if used
-    password:
-    # <string> basic auth password
-    basicAuthPassword:
-  version: 1
+  isDefault: true
   # <bool> allow users to edit datasources from the UI.
   editable: false
   
