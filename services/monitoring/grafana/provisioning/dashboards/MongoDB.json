@@ -16,8 +16,7 @@
   "editable": true,
   "gnetId": 2583,
   "graphTooltip": 1,
-  "id": 1,
-  "iteration": 1580850286604,
+  "iteration": 1581533257018,
   "links": [],
   "panels": [
     {
@@ -845,21 +844,6 @@
         "align": false,
         "alignLevel": null
       }
-    },
-    {
-      "collapsed": false,
-      "datasource": null,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 19
-      },
-      "id": 24,
-      "panels": [],
-      "repeat": null,
-      "title": "Alerts",
-      "type": "row"
     }
   ],
   "refresh": "5s",

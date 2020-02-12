@@ -10,7 +10,8 @@
 - Дополнен README.md.
 - Обновлен .gitlab-ci.yml - добавлены кнопки остановки окружений.
 - Добавить дополнительный поток crawler.
-- Добавить service discovery для crawler ?
+- Добавить service discovery для crawler?
+- Обновлен README.md.
 
 ## 2020-02-11
 
