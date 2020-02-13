@@ -135,9 +135,9 @@
 
 ### Запекание образа будущих окружений с помощью Packer и установкой docker и docker-compose с помощью Ansible
 
-- Переходим в папку /otus-project/infra/packer.
+- Переходим в корень репозитория.
 - Копируем variables.json.example в variables.json.
-- Запекаем образ для наших будущих окружений c помощью команды **packer build -var-file=variables.json docker.json**.
+- Запекаем образ для наших будущих окружений c помощью команды **packer build -var-file=infra/packer/variables.json infra/packer/docker.json**.
 
 ### Развертывание окружений с помощью Terraform
 
